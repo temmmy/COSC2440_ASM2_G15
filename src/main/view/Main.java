@@ -6,7 +6,11 @@
         - Vu Tien Quang    s3981278
 */
 
-package main.controller;
+package main.view;
 
-public class UserController {
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+
 }

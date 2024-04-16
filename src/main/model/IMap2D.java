@@ -6,7 +6,8 @@
         - Vu Tien Quang    s3981278
 */
 
-package main.controller;
+package main.model;
 
-public class UserController {
+public interface IMap2D {
+
 }
