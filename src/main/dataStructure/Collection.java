@@ -1,13 +1,13 @@
 package main.dataStructure;
 
 public interface Collection<E> {
-    boolean add(E e);
-    boolean addAll(Collection<? extends E> c);
+    void add(E e);
+    boolean addAll(E[] c);
     void clear();
-    boolean contains(Object o);
-    boolean containsAll(Collection<?> c);
+    boolean contains(E o);
+    boolean containsAll(E[] c);
     boolean isEmpty();
-    boolean remove(Object o);
-    boolean removeAll(Collection<?> c);
+    void remove(E o);
+    boolean removeAll(E[] c);
     int size();
 }

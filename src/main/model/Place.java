@@ -9,7 +9,6 @@
 package main.model;
 
 import main.dataStructure.ArrayList;
-import main.dataStructure.Set;
 
 public class Place {
         private int id;
