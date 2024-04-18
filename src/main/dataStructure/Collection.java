@@ -1,6 +1,7 @@
 package main.dataStructure;
 
 public interface Collection<E> {
+    E get(int index);
     void add(E e);
     boolean addAll(E[] c);
     void clear();

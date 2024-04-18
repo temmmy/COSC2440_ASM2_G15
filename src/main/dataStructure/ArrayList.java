@@ -28,6 +28,11 @@ public class ArrayList<T> implements Collection<T> {
 
 
     @Override
+    public T get(int index) {
+        return array[index];
+    }
+
+    @Override
     public void add(T t) {
         ensureCapacity(size + 1);
         array[size++] = t;

@@ -73,7 +73,8 @@ public class Node {
         children[2] = new Node(r2);
         children[3] = new Node(r3);
 
-        for (Point point : points) {
+        for (int i = 0; i < points.size(); i++){
+            Point point = points.get(i);
             for (Node child : children) {
                 if (child.getBoundary().contains(point.getX(), point.getY())) {
                     child.insert(point);

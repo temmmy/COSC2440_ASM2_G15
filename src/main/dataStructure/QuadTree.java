@@ -2,7 +2,7 @@ package main.dataStructure;
 
 public class QuadTree {
     private static final int MAX_CAPACITY = 4;
-    private Node root;
+    private final Node root;
 
     public QuadTree(Rectangle boundary) {
         this.root = new Node(boundary);
@@ -46,7 +46,8 @@ public class QuadTree {
             return;
         }
 
-        for (Point point : points){
+        for (int i = 0; i < points.size(); i++){
+            Point point = points.get(i);
             if (range.contains(point.getX(), point.getY())){
                 System.out.println("Found point: " + point);
             }
