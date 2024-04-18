@@ -15,6 +15,12 @@ public class Rectangle {
         this.height = 0;
     }
 
+    public Rectangle(int width, int height){
+        this.topLeftX = this.topLeftY = 0;
+        this.width = width;
+        this.height = height;
+    }
+
     public Rectangle(int x, int y, int width, int height) {
         this.topLeftX = x;
         this.topLeftY = y;

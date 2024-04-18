@@ -4,6 +4,7 @@ public class QuadTree {
     private static final int MAX_CAPACITY = 4;
     private final Node root;
 
+    public QuadTree() {};
     public QuadTree(Rectangle boundary) {
         this.root = new Node(boundary);
     }
@@ -33,29 +34,30 @@ public class QuadTree {
 
     }
 
-    public void search(Rectangle range) {
-        search(root, range);
+    public Point search(Rectangle range) {
+        return search(root, range);
     }
 
-    private void search(Node node, Rectangle range){
+    private Point search(Node node, Rectangle range){
         Rectangle boundary = node.getBoundary();
         ArrayList<Point> points = node.getPoints();
         Node[] children = node.getChildren();
 
         if (!boundary.intersects(range)) {
-            return;
+            return null;
         }
 
         for (int i = 0; i < points.size(); i++){
             Point point = points.get(i);
             if (range.contains(point.getX(), point.getY())){
                 System.out.println("Found point: " + point);
+                return point;
             }
         }
 
         if (!node.isLeaf()) {
             for (Node child : children) {
-                search(child, range);
+                return search(child, range);
             }
         }
 

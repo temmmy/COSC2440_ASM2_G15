@@ -1,6 +1,7 @@
 package main.dataStructure;
 
 public class Node {
+    private static final int MAX_CAPACITY = 4;
     private final Rectangle boundary;
     private final ArrayList<Point> points;
     private final Node[] children;
@@ -8,7 +9,7 @@ public class Node {
     public Node(Rectangle boundary) {
         this.boundary = boundary;
         this.points = new ArrayList<>();
-        this.children = new Node[4];
+        this.children = new Node[MAX_CAPACITY];
     }
 
     public Rectangle getBoundary() {
@@ -25,31 +26,6 @@ public class Node {
 
     public boolean isLeaf() {
         return children[0] == null;
-    }
-
-    public boolean insert(Point point) {
-        boolean isAdded = false;
-        if (!boundary.contains(point.getX(), point.getY())) {
-            return false;
-        }
-
-        if (isLeaf()) {
-            if (points.size() < 4) {
-                points.add(point);
-                isAdded = true;
-            } else {
-                split();
-            }
-        }
-
-        for (Node child : children) {
-            if (child.insert(point)) {
-                isAdded = true;
-                break;
-            }
-        }
-
-        return isAdded;
     }
 
     /**
@@ -77,7 +53,7 @@ public class Node {
             Point point = points.get(i);
             for (Node child : children) {
                 if (child.getBoundary().contains(point.getX(), point.getY())) {
-                    child.insert(point);
+                    points.add(point);
                     break;
                 }
             }
