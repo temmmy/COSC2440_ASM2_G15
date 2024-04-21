@@ -11,6 +11,11 @@ public class ArrayList<T> implements Collection<T> {
         this.size = 0;
     }
 
+    public ArrayList(int size) {
+        this.array = (T[]) new Object[size];
+        this.size = size;
+    }
+
     public ArrayList(T[] a) {
         this.size = a.length;
         this.array = (T[]) new Object[size];
@@ -89,13 +94,14 @@ public class ArrayList<T> implements Collection<T> {
     }
 
     @Override
-    public void remove(T o) {
+    public boolean remove(T o) {
         for (int i = 0; i < size; i++){
             if (array[i].equals(o)){
                 removeAtIndex(i);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     @Override

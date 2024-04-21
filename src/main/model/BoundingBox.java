@@ -8,7 +8,9 @@
 
 package main.model;
 
-public class BoundingBox {
+import main.dataStructure.Rectangle;
+
+public class BoundingBox extends Rectangle {
     private int topLeftX;
     private int topLeftY;
     private int width;

@@ -11,28 +11,28 @@ package main.model;
 import main.dataStructure.ArrayList;
 import main.dataStructure.Point;
 
-public class Place {
-        private int id;
-        private Point location;
+public class Place extends Point {
+        private String name;
         private ArrayList<ServiceType> services;
 
         public Place() {
+                super();
                 this.services = new ArrayList<>();
-                this.point = new Point();
+                this.name = null;
         }
 
-        public Place(int id, Point point, ArrayList<ServiceType> services) {
-                this.id = id;
-                this.location = point;
+        public Place(Point point, String name, ArrayList<ServiceType> services) {
+                super(point);
                 this.services = services;
+                this.name = name;
         }
 
-        public int getId() {
-                return id;
+        public String getName() {
+                return name;
         }
 
-        public Point getLocation() {
-                return location;
+        public void setName(String name) {
+                this.name = name;
         }
 
         public ArrayList<ServiceType> getServices() {

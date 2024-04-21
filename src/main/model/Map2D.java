@@ -12,7 +12,7 @@ import main.dataStructure.ArrayList;
 import main.dataStructure.QuadTree;
 import main.dataStructure.Rectangle;
 
-public class Map2D implements IMap2D {
+public class Map2D extends QuadTree<Place> implements IMap2D {
         private static final int MAX_WIDTH = 10000000;
         private static final int MAX_HEIGHT = 10000000;
         private static final int MAX_PLACES = 100000000;
@@ -20,15 +20,14 @@ public class Map2D implements IMap2D {
         private static final int MIN_BOX = 100;
         private static final int MAX_BOX = 100000;
 
-        private ArrayList<Place> places;
         private Rectangle boundingBox;
 
-        private QuadTree map;
+        private QuadTree<Place> map;
 
         public Map2D() {
                 Rectangle r = new Rectangle(MAX_WIDTH, MAX_HEIGHT);
                 this.map = new QuadTree(r);
-                this.places = new ArrayList<>();
+
                 this.boundingBox = new Rectangle(MIN_BOX, MIN_BOX);
         }
 
@@ -38,13 +37,11 @@ public class Map2D implements IMap2D {
                 // else...
         }
         public void addPlace(Place place){
-                places.add(place);
                 map.insert(place.getLocation());
         }
 
         public void removePlace(Place place) {
-                places.remove(place);
-                // map.remove(place);
+                 map.remove(place);
         }
 
         public Place[] searchRange(Rectangle range){

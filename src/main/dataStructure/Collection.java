@@ -8,7 +8,7 @@ public interface Collection<E> {
     boolean contains(E o);
     boolean containsAll(E[] c);
     boolean isEmpty();
-    void remove(E o);
+    boolean remove(E o);
     boolean removeAll(E[] c);
     int size();
 }

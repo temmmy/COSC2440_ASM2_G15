@@ -1,67 +1,54 @@
 package main.dataStructure;
 
-public class QuadTree {
+public class QuadTree<T extends Point> {
     private static final int MAX_CAPACITY = 4;
-    private final Node root;
+    private Node<T> root;
 
-    public QuadTree() {};
+    public QuadTree() {
+        this.root = null;
+    };
     public QuadTree(Rectangle boundary) {
-        this.root = new Node(boundary);
+        this.root = new Node<>(boundary);
     }
 
-    public void insert(Point point) {
-        insert(root, point);
+    public void insert(T dataPoint) {
+        insert(root, dataPoint);
     }
 
-    private void insert(Node node, Point point) {
-        Rectangle boundary = node.getBoundary();
-        ArrayList<Point> points = node.getPoints();
-        Node[] children = node.getChildren();
+    private boolean insert(Node<T> node, T dataPoint) {
+        if (node == null) { return false; }
 
-        if (!boundary.contains(point.getX(), point.getY())) {
-            return;
+        if (!node.getBoundary().contains(dataPoint.getX(), dataPoint.getY())) {
+            return false;
         }
 
-        if (points.size() < MAX_CAPACITY && node.isLeaf()) {
-            points.add(point);
+        if (node.getData().size() < MAX_CAPACITY || node.isLeaf()) {
+            node.insert(dataPoint);
+            return true;
         } else {
             node.split();
+            return insert(node, dataPoint);
         }
-
-        for (Node child : children) {
-            insert(child, point);
-        }
-
     }
 
-    public Point search(Rectangle range) {
+    public T search(Rectangle range) {
         return search(root, range);
     }
 
-    private Point search(Node node, Rectangle range){
-        Rectangle boundary = node.getBoundary();
-        ArrayList<Point> points = node.getPoints();
-        Node[] children = node.getChildren();
-
-        if (!boundary.intersects(range)) {
-            return null;
-        }
-
-        for (int i = 0; i < points.size(); i++){
-            Point point = points.get(i);
-            if (range.contains(point.getX(), point.getY())){
-                System.out.println("Found point: " + point);
-                return point;
-            }
-        }
-
-        if (!node.isLeaf()) {
-            for (Node child : children) {
-                return search(child, range);
-            }
-        }
+    private T search(Node<T> node, Rectangle range) {
 
     }
+
+    public boolean remove(T dataPoint) {
+        return remove(root, dataPoint);
+    }
+
+    private boolean remove(Node<T> node, T dataPoint) {
+        if (node == null) { return false; }
+
+
+    }
+
 
 
 }
