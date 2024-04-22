@@ -2,57 +2,78 @@ package main.dataStructure;
 
 public class Node<T extends Point> {
     private static final int MAX_CAPACITY = 4;
-    private final Rectangle boundary;
-    private final ArrayList<T> data;
-    private final ArrayList<Node<T>> children;
+    private Rectangle boundary;
+    private T[] data;
+    private Node<T>[] children;
 
     public Node(Rectangle boundary) {
         this.boundary = boundary;
-        this.data = new ArrayList<>();
-        this.children = new ArrayList<>();
+        this.data = (T[]) new Point[MAX_CAPACITY];
+        this.children = (Node<T>[]) new Node[MAX_CAPACITY];
     }
 
     public Rectangle getBoundary() {
         return boundary;
     }
 
-    public ArrayList<T> getData() {
+    public T[] getData() {
         return data;
     }
 
-    public ArrayList<Node<T>> getChildren() {
+    public Node<T>[] getChildren() {
         return children;
     }
 
-    public boolean isLeaf() {
-        return children.isEmpty();
+    public void setBoundary(Rectangle boundary) {
+        this.boundary = boundary;
     }
-    public boolean isEmpty() { return data.isEmpty(); }
+
+    public void setData(T[] data) {
+        this.data = data;
+    }
+
+    public void setChildren(Node<T>[] children) {
+        this.children = children;
+    }
+
+    public void clear() {
+        this.boundary = null;
+        this.children = null;
+        this.data = null;
+    }
+
+    public boolean isLeaf() {
+        return children[0] == null;
+    }
+
+    public boolean isEmpty() {
+        return data[0] == null;
+    }
+
     public boolean contains(T dataPoint) {
-        return this.boundary.contains(dataPoint.getX(), dataPoint.getY());
+        return boundary.contains(dataPoint);
     }
 
     public boolean insert(T dataToInsert) {
-        if (contains(dataToInsert) && isLeaf()) {
-            this.data.add(dataToInsert);
-            if (data.size() >= MAX_CAPACITY) {
-                System.out.println("Splitting node...");
-                split();
-                distributeData();
+        if (!contains(dataToInsert)) {
+            return false;
+        }
+        for (int i = 0; i < data.length; i++) {
+
+            if (data[i] == null) {
+                data[i] = dataToInsert;
+                return true;
             }
-            return true;
+            if (data[i].getLocation().equals(dataToInsert.getLocation())) return false;
+
         }
         return false;
     }
 
-    /**
-     * boundary:
-     * (tLX,tLy)r0,r1
-     *          r2,r3
-     */
-    private void split() {
-
-        if (!isLeaf()) { return; } // Do not split if not a leaf node
+    public void split() {
+        if (!isLeaf()) {
+            return; // Do not split if not a leaf node
+        }
 
         int subWidth = boundary.getWidth() / 2;
         int subHeight = boundary.getHeight() / 2;
@@ -64,23 +85,11 @@ public class Node<T extends Point> {
         Rectangle r2 = new Rectangle(x, y - subHeight, subWidth, subHeight);
         Rectangle r3 = new Rectangle(x + subWidth, y - subHeight, subWidth, subHeight);
 
-        children.add(new Node<>(r0));
-        children.add(new Node<>(r1));
-        children.add(new Node<>(r2));
-        children.add(new Node<>(r3));
+        children[0] = new Node<>(r0);
+        children[1] = new Node<>(r1);
+        children[2] = new Node<>(r2);
+        children[3] = new Node<>(r3);
 
-    }
-
-    private void distributeData() {
-        // Distribute List<T> data into 4 children
-        for (int i = 0; i < data.size(); i++) {
-            T dataPoint = data.get(i);
-            for (int j = 0; j < MAX_CAPACITY; j++){
-                Node<T> child = children.get(j);
-                if (child.insert(dataPoint)) break;
-            }
-        }
-        data.clear(); // Clear data because only children or data can exist
     }
 
 }

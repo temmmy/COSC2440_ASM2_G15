@@ -8,13 +8,12 @@
 
 package main.model;
 
-import main.dataStructure.ArrayList;
 import main.dataStructure.QuadTree;
 import main.dataStructure.Rectangle;
 
 public class Map2D extends QuadTree<Place> implements IMap2D {
-        private static final int MAX_WIDTH = 10000000;
-        private static final int MAX_HEIGHT = 10000000;
+        private static final int MAP_WIDTH = 10000000;
+        private static final int MAP_HEIGHT = 10000000;
         private static final int MAX_PLACES = 100000000;
         private static final int MAX_QUERIES = 50;
         private static final int MIN_BOX = 100;
@@ -22,42 +21,39 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
 
         private Rectangle boundingBox;
 
-        private QuadTree<Place> map;
-
         public Map2D() {
-                Rectangle r = new Rectangle(MAX_WIDTH, MAX_HEIGHT);
-                this.map = new QuadTree(r);
-
+                super(new Rectangle(MAP_WIDTH, MAP_HEIGHT));
                 this.boundingBox = new Rectangle(MIN_BOX, MIN_BOX);
         }
 
-        public Rectangle setBoundingBox(Rectangle r) {
-                // if size fits within
-                this.boundingBox = r;
-                // else...
-        }
-        public void addPlace(Place place){
-                map.insert(place.getLocation());
+        public Rectangle getBoundingBox() {
+                return boundingBox;
         }
 
-        public void removePlace(Place place) {
-                 map.remove(place);
+        public void setBoundingBox(Rectangle boundingBox) {
+                this.boundingBox = boundingBox;
         }
 
-        public Place[] searchRange(Rectangle range){
-                return map.search(range);
+        public Place[] searchPlaces() {
+                return searchElements(boundingBox, MAX_QUERIES);
         }
 
-        public Place[] searchRange(Place place, int distance) {
-                Rectangle range = new Rectangle(place.getLocation(), distance);
-                return map.search(range);
+        public enum DistanceType {
+                NEAR, WALKING, BIKE, MOTORBIKE, DRIVING, FAR
         }
-
-        public Place[] searchNear(Place place) {
-                // set bounding box
-                // map.search(boundingBox);
+        public Place[] searchPlaces(Place center, DistanceType distanceType) {
+                int distance = switch (distanceType) {
+                    case NEAR -> MIN_BOX;
+                    case FAR -> MAX_BOX;
+                    case WALKING -> 500;
+                    case BIKE -> 1000;
+                    case MOTORBIKE -> 5000;
+                    case DRIVING -> 8000;
+                };
+                Rectangle range = new Rectangle(center, distance, distance);
+                setBoundingBox(range);
+                return searchPlaces();
         }
-
 
 
 

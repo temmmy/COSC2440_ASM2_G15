@@ -69,6 +69,13 @@ public class Rectangle {
                 y >= this.topLeftY && y <= this.topLeftY + this.height;
     }
 
+    public boolean contains(Point point) {
+        int x = point.getX();
+        int y = point.getY();
+        return contains(x, y);
+    }
+
+
     public Point getLocation() {
         return new Point(this.topLeftX, this.topLeftY);
     }

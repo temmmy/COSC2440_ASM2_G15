@@ -8,21 +8,29 @@
 
 package main.model;
 
-import main.dataStructure.ArrayList;
 import main.dataStructure.Point;
 
+import java.util.Arrays;
+
 public class Place extends Point {
+        private static final int MAX_SERVICES = 10;
         private String name;
-        private ArrayList<ServiceType> services;
+        private ServiceType[] services;
 
         public Place() {
                 super();
-                this.services = new ArrayList<>();
+                this.services = (ServiceType[]) new Object[MAX_SERVICES];
                 this.name = null;
         }
 
-        public Place(Point point, String name, ArrayList<ServiceType> services) {
+        public Place(Point point, String name, ServiceType[] services) {
                 super(point);
+                this.services = services;
+                this.name = name;
+        }
+
+        public Place (int x, int y, String name, ServiceType[] services) {
+                super(x, y);
                 this.services = services;
                 this.name = name;
         }
@@ -35,29 +43,43 @@ public class Place extends Point {
                 this.name = name;
         }
 
-        public ArrayList<ServiceType> getServices() {
+        public ServiceType[] getServices() {
                 return services;
         }
 
-        public boolean addService(ServiceType s) {
-                boolean isAdded = false;
-                if (!services.contains(s)) {
-                        services.add(s);
-                        isAdded = true;
+        public boolean addService(ServiceType newService) {
+
+                for (int i = 0; i < services.length; i++) {
+                        if (services[i] == null) {
+                                services[i] = newService;
+                                return true;
+                        } else if (services[i].name().equals(newService.name())) {
+                                return false;
+                        }
                 }
-                return isAdded;
+                return false;
 
         }
 
-        public boolean removeService(ServiceType s) {
-                boolean isRemoved = false;
-                if (services.contains(s)) {
-                        services.remove(s);
-                        isRemoved = true;
-                }
-                return isRemoved;
+        public boolean removeService(ServiceType serviceToRemove) {
+                for (int i = 0; i < services.length; i++) {
 
+                        if (services[i] == null) {
+                                return false;
+                        } else if (services[i].name().equals(serviceToRemove.name())) {
+                                services[i] = null;
+                                return true;
+                        }
+                }
+                return false;
         }
 
-
+        @Override
+        public String toString() {
+                return "Place{" +
+                        "name='" + name + '\'' +
+                        ", services=" + Arrays.toString(services) + '\'' +
+                        ", location=" + this.getX() + ", " + this.getY() +
+                        '}';
+        }
 }
