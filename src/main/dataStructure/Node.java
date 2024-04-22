@@ -27,42 +27,30 @@ public class Node<T extends Point> {
     public boolean isLeaf() {
         return children.isEmpty();
     }
-
-    public boolean insert(T dataPoint) {
-        if (!boundary.contains(dataPoint.getX(), dataPoint.getY())) {
-            return false;
-        }
-
-        if (data.size() < MAX_CAPACITY || isLeaf()) {
-            this.data.add(dataPoint);
-            return true;
-        } else {
-            split();
-            return insert(dataPoint); // Re-insert the point after splitting
-        }
+    public boolean isEmpty() { return data.isEmpty(); }
+    public boolean contains(T dataPoint) {
+        return this.boundary.contains(dataPoint.getX(), dataPoint.getY());
     }
 
-    public boolean remove(T dataPoint) {
-        if (!boundary.contains(dataPoint.getX(), dataPoint.getY())){
-            return false;
-        }
-
-        if (data.remove(dataPoint)) {
-            if (data.isEmpty() && !isLeaf()) {
-                return false;
+    public boolean insert(T dataToInsert) {
+        if (contains(dataToInsert) && isLeaf()) {
+            this.data.add(dataToInsert);
+            if (data.size() >= MAX_CAPACITY) {
+                System.out.println("Splitting node...");
+                split();
+                distributeData();
             }
             return true;
         }
-
         return false;
-
     }
+
     /**
      * boundary:
      * (tLX,tLy)r0,r1
      *          r2,r3
      */
-    public void split() {
+    private void split() {
 
         if (!isLeaf()) { return; } // Do not split if not a leaf node
 
@@ -81,21 +69,18 @@ public class Node<T extends Point> {
         children.add(new Node<>(r2));
         children.add(new Node<>(r3));
 
-        distributeData();
     }
 
     private void distributeData() {
-        if (data.size() < MAX_CAPACITY) { return; }
         // Distribute List<T> data into 4 children
         for (int i = 0; i < data.size(); i++) {
             T dataPoint = data.get(i);
             for (int j = 0; j < MAX_CAPACITY; j++){
                 Node<T> child = children.get(j);
-                boolean inserted = child.insert(dataPoint);
-                if (!inserted) break;
+                if (child.insert(dataPoint)) break;
             }
         }
-        data.clear();
+        data.clear(); // Clear data because only children or data can exist
     }
 
 }
