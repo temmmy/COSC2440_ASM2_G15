@@ -26,7 +26,7 @@ public class QuadTree<T extends Point> {
         }
 
         if (node.isLeaf()) {
-                if (node.getData()[3] != null) {
+                if (node.getData()[MAX_CAPACITY - 1] != null) {
                     // Split the leaf node if it's full
                     node.split();
                     // Recursively try to insert into children after splitting

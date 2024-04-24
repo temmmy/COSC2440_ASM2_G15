@@ -4,13 +4,14 @@ import main.dataStructure.Point;
 import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
+import main.view.Menu;
 
 public class Application {
     public static void main(String[] args) {
         Map2D map = new Map2D();
 
         int mapSize = 10000000;
-        int placeSize = 100;
+        int placeSize = 9;
         int serviceCount = ServiceType.values().length;
 
         for (int i = 0; i < placeSize; i++) {
@@ -32,6 +33,10 @@ public class Application {
             map.insert(place);
         }
         map.display();
+
+        Menu app = new Menu();
+        app.mainMenu();
+
 
     }
 

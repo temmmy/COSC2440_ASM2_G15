@@ -74,6 +74,8 @@ public class Menu {
         } else {
             return ServiceType.values()[choice - 1];
         }
+
+        return null;
     }
 
     public void insertMenu() {
@@ -98,7 +100,13 @@ public class Menu {
     public void removeMenu() {
         header("REMOVE A PLACE");
         String id = fieldBox("ID of place you want to remove");
-        boolean isRemoved = map.remove(id);
+        Place placeToRemove = map.findByIdOrName(id, true);
+        if (placeToRemove == null) {
+            System.out.println("Place not found!");
+            removeMenu();
+            return;
+        }
+        boolean isRemoved = map.remove(placeToRemove);
         if (isRemoved) {
             System.out.println("Remove a Place successfully!");
         } else {
@@ -109,7 +117,7 @@ public class Menu {
     public void editMenu() {
         header("EDIT A PLACE");
         String id = fieldBox("ID of a place you want to edit");
-        Place placeToEdit = map.findById(id);
+        Place placeToEdit = map.findByIdOrName(id, true);
         if (placeToEdit == null) {
             System.out.println("Place not found!");
             editMenu();

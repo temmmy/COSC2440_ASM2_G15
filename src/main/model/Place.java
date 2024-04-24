@@ -16,21 +16,25 @@ public class Place extends Point {
         private static final int MAX_SERVICES = 10;
         private String name;
         private ServiceType[] services;
+        private int serviceSize;
 
         public Place() {
                 super();
-                this.services = (ServiceType[]) new Object[MAX_SERVICES];
+                this.serviceSize = 0;
+                this.services = new ServiceType[serviceSize];
                 this.name = null;
         }
 
         public Place(Point point, String name, ServiceType[] services) {
                 super(point);
+                this.serviceSize = services.length;
                 this.services = services;
                 this.name = name;
         }
 
         public Place (int x, int y, String name, ServiceType[] services) {
                 super(x, y);
+                this.serviceSize = services.length;
                 this.services = services;
                 this.name = name;
         }
@@ -48,30 +52,40 @@ public class Place extends Point {
         }
 
         public boolean addService(ServiceType newService) {
+                if (serviceSize >= MAX_SERVICES) { return false; }
 
-                for (int i = 0; i < services.length; i++) {
-                        if (services[i] == null) {
-                                services[i] = newService;
-                                return true;
-                        } else if (services[i].name().equals(newService.name())) {
+                for (int i = 0; i < serviceSize; i++) {
+                        if (services[i].name().equals(newService.name())) {
                                 return false;
                         }
                 }
-                return false;
+                services[serviceSize++] = newService;
+                serviceSize++;
+                return true;
 
         }
 
         public boolean removeService(ServiceType serviceToRemove) {
-                for (int i = 0; i < services.length; i++) {
+                if (serviceSize == 0) { return false; }
 
-                        if (services[i] == null) {
-                                return false;
-                        } else if (services[i].name().equals(serviceToRemove.name())) {
-                                services[i] = null;
-                                return true;
+                int indexToRemove = -1;
+                for (int i = 0; i < serviceSize; i++) {
+                        if (services[i].name().equals(serviceToRemove.name())) {
+                                indexToRemove = i;
+                                break;
                         }
                 }
-                return false;
+
+                if (indexToRemove != -1) {
+                        // Shift elements to the left to remove the service
+                        for (int i = indexToRemove; i < serviceSize - 1; i++) {
+                                services[i] = services[i + 1];
+                        }
+                        serviceSize--;
+                        return true;
+                } else {
+                        return false;
+                }
         }
 
         @Override

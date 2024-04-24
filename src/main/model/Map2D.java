@@ -34,6 +34,11 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
                 this.boundingBox = boundingBox;
         }
 
+        public Place findByIdOrName(String id, boolean isId) {
+
+                return null;
+        }
+
         public Place[] searchPlaces() {
                 return searchElements(boundingBox, MAX_QUERIES);
         }
