@@ -1,15 +1,18 @@
 package main.dataStructure;
 
-public class Node<T extends Point> {
+import main.model.Place;
+
+public class Node<T extends Place> {
     private static final int MAX_CAPACITY = 4;
     private Rectangle boundary;
     private T[] data;
     private Node<T>[] children;
 
+    @SuppressWarnings("unchecked")
     public Node(Rectangle boundary) {
         this.boundary = boundary;
-        this.data = (T[]) new Point[MAX_CAPACITY];
-        this.children = (Node<T>[]) new Node[MAX_CAPACITY];
+        this.data = (T[]) new Place[MAX_CAPACITY];
+        this.children = new Node[MAX_CAPACITY];
     }
 
     public Rectangle getBoundary() {
@@ -56,6 +59,7 @@ public class Node<T extends Point> {
 
     public boolean insert(T dataToInsert) {
         if (!contains(dataToInsert)) {
+            System.out.println("not contain");
             return false;
         }
         for (int i = 0; i < data.length; i++) {
@@ -64,7 +68,10 @@ public class Node<T extends Point> {
                 data[i] = dataToInsert;
                 return true;
             }
-            if (data[i].getLocation().equals(dataToInsert.getLocation())) return false;
+            if (data[i].getLocation().equals(dataToInsert.getLocation())){
+                System.out.println("duplicate - " + data[i]);
+                return false;
+            }
 
         }
         return false;

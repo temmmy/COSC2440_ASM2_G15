@@ -21,7 +21,7 @@ public class Place extends Point {
         public Place() {
                 super();
                 this.serviceSize = 0;
-                this.services = new ServiceType[serviceSize];
+                this.services = new ServiceType[MAX_SERVICES];
                 this.name = null;
         }
 
@@ -39,6 +39,13 @@ public class Place extends Point {
                 this.name = name;
         }
 
+        public Place (int x, int y, String name) {
+                super(x, y);
+                this.serviceSize = 0;
+                this.services = new ServiceType[MAX_SERVICES];
+                this.name = name;
+        }
+
         public String getName() {
                 return name;
         }
@@ -52,14 +59,14 @@ public class Place extends Point {
         }
 
         public boolean addService(ServiceType newService) {
-                if (serviceSize >= MAX_SERVICES) { return false; }
+                if (serviceSize >= MAX_SERVICES) { return false; } // services is full
 
                 for (int i = 0; i < serviceSize; i++) {
                         if (services[i].name().equals(newService.name())) {
-                                return false;
+                                return false; // service already exists
                         }
                 }
-                services[serviceSize++] = newService;
+                services[serviceSize] = newService;
                 serviceSize++;
                 return true;
 
@@ -88,12 +95,33 @@ public class Place extends Point {
                 }
         }
 
+        public boolean contain(ServiceType service) {
+                for (ServiceType s : services) {
+                        if (s.equals(service)) return true;
+                }
+                return false;
+        }
+
+        public boolean partialEquals(Place p){
+            if (p == null) return false;
+            return name.equals(p.getName()) ||
+                    getLocation().equals(p.getLocation()) ||
+                    contain(p.getServices()[0]);
+        }
         @Override
         public String toString() {
+                // Convert each ServiceType object to a string
+                String[] serviceStrings = new String[serviceSize];
+                for (int i = 0; i < serviceSize; i++) {
+                        if (services[i] != null)
+                                serviceStrings[i] = services[i].toString();
+                }
+                // Join the service strings with commas
+                String serviceStr = String.join(", ", serviceStrings);
                 return "Place{" +
                         "name='" + name + '\'' +
-                        ", services=" + Arrays.toString(services) + '\'' +
-                        ", location=" + this.getX() + ", " + this.getY() +
+                        ", services=[" + serviceStr + "]" + '\'' +
+                        ", location=(x=" + this.getX() + ", y=" + this.getY() + ")" +
                         '}';
         }
 }

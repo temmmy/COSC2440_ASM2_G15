@@ -1,9 +1,12 @@
 package main.view;
 
+import main.dataStructure.QuadTree;
+import main.dataStructure.Rectangle;
 import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Menu {
@@ -28,10 +31,9 @@ public class Menu {
         System.out.println("2. Remove a Place");
         System.out.println("3. Edit a Place");
         System.out.println("4. Display Places");
-        System.out.println("5. Search Places from a Place");
-        System.out.println("6. Search Places from a Location");
-        System.out.println("7. Exit");
-        System.out.println("> Enter your choice: ");
+        System.out.println("5. Search Places");
+        System.out.println("6. Exit");
+        System.out.print("> Enter your choice: ");
 
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -41,14 +43,23 @@ public class Menu {
             case 2 -> removeMenu();
             case 3 -> editMenu();
             case 4 -> displayMenu();
-            case 5 -> searchFromAPlace();
-            case 6 -> searchFromALocation();
-            case 7 -> exit();
+            case 5 -> searchMenu();
+            case 6 -> exit();
             default -> System.out.println("Invalid choice");
 
         }
     }
 
+    private void returnToMain() {
+        try {
+            System.out.println("Returning to Main Menu...");
+            Thread.sleep(3000);
+            mainMenu();
+        } catch (InterruptedException e) {
+            System.out.println("Something went wrong");
+            e.printStackTrace();
+        }
+    }
     public void exit() {
         System.exit(0);
     }
@@ -56,8 +67,8 @@ public class Menu {
     // Place(int id, String name, int x, int y, services)
 
     private String fieldBox(String field) {
-        System.out.println(">> Enter " + field + ": ");
-        return scanner.nextLine();
+        System.out.print(">> Enter " + field + ": ");
+        return scanner.nextLine().trim();
     }
 
     private ServiceType pickAService() {
@@ -67,7 +78,10 @@ public class Menu {
             System.out.println((i + 1) + ". " + ServiceType.values()[i]);
         }
 
-        int choice = Integer.parseInt(fieldBox("your choice"));
+        String choiceStr = fieldBox("your choice");
+        if (choiceStr.isBlank()) { return null; };
+
+        int choice = Integer.parseInt(choiceStr);
 
         if (choice < 1 || choice > ServiceType.values().length) {
             System.out.println("Invalid choice!");
@@ -84,27 +98,71 @@ public class Menu {
         String name = fieldBox("name of the place");
         int x = Integer.parseInt(fieldBox("x-coordinate"));
         int y = Integer.parseInt(fieldBox("y-coordinate"));
-        ServiceType[] services = new ServiceType[10];
-        while (scanner.hasNext()) {
-            int index = 0;
-            services[index] = pickAService();
-            index++;
+
+        Place newPlace = new Place();
+        newPlace.setLocation(x,y);
+        newPlace.setName(name);
+
+        while (true) {
+            ServiceType service = pickAService();
+            if (service != null) {
+                if (newPlace.addService(service)) {
+                    System.out.println(newPlace);
+                } else {
+                    System.out.println("Duplicate service or Services is full for this place.");
+                };
+            } else {
+                break;
+            }
         }
-        Place newPlace = new Place(x,y,name, services);
-        System.out.println("Inserting place " + newPlace.getName() + " into the map...");
+
+        System.out.println("Inserting *" + newPlace.getName() + "* into the map...");
         map.insert(newPlace);
         System.out.println("Insert a Place successfully!");
+        // Return to mainMenu
+
+        returnToMain();
 
     }
 
+    public Place createPartialPlace() {
+        System.out.println("Attribute of the place: ");
+        System.out.println("1. Name");
+        System.out.println("2. Location");
+        System.out.println("3. Service");
+        int choice = Integer.parseInt(fieldBox("your choice: "));
+
+        Place partialPlace = new Place();
+        switch (choice) {
+            case 1:
+                String name = fieldBox("name of the place: ");
+                partialPlace.setName(name);
+                break;
+            case 2:
+                int x = Integer.parseInt(fieldBox("x-coordinate: "));
+                int y = Integer.parseInt(fieldBox("y-coordinate: "));
+                partialPlace.setLocation(x, y);
+                break;
+            case 3:
+                ServiceType service = pickAService();
+                partialPlace.addService(service);
+                break;
+            default:
+                System.out.println("Wrong input.");
+        }
+        System.out.println("Partial Place created.");
+        System.out.println(partialPlace);
+        return partialPlace;
+    }
+
+
     public void removeMenu() {
         header("REMOVE A PLACE");
-        String id = fieldBox("ID of place you want to remove");
-        Place placeToRemove = map.findByIdOrName(id, true);
+        String name = fieldBox("Name of place you want to remove");
+        Place placeToRemove = null;
         if (placeToRemove == null) {
             System.out.println("Place not found!");
             removeMenu();
-            return;
         }
         boolean isRemoved = map.remove(placeToRemove);
         if (isRemoved) {
@@ -112,12 +170,15 @@ public class Menu {
         } else {
             System.out.println("Place not found");
         }
+
+        returnToMain();
     }
 
     public void editMenu() {
         header("EDIT A PLACE");
-        String id = fieldBox("ID of a place you want to edit");
-        Place placeToEdit = map.findByIdOrName(id, true);
+        Place partialPlace = createPartialPlace();
+
+        Place placeToEdit = map.searchBy(partialPlace).getRoot().getData()[0];
         if (placeToEdit == null) {
             System.out.println("Place not found!");
             editMenu();
@@ -162,19 +223,34 @@ public class Menu {
             placeToEdit.removeService(serviceToRemove);
             System.out.println("Service " + serviceToRemove  + " is removed!");
         }
+
+        returnToMain();
     }
 
     public void displayMenu() {
         header("Map Structure");
         map.display();
+        returnToMain();
     }
 
-    public void searchFromAPlace() {
-
+    public void searchMenu() {
+        header("FIND PLACES");
+        setBoundingBox();
+        Place placeToCompare = createPartialPlace();
+        QuadTree<Place> results = map.searchBy(placeToCompare);
+        results.display();
+        returnToMain();
     }
 
-    public void searchFromALocation() {
-
+    private void setBoundingBox() {
+        System.out.println("Do you want to change location? (Type YES or blank)");
+        String choice = fieldBox("your choice: ");
+        if (choice.equalsIgnoreCase("YES")) {
+            int x = Integer.parseInt(fieldBox("x-coordinate: "));
+            int y = Integer.parseInt(fieldBox("y-coordinate: "));
+            int distance = Integer.parseInt(fieldBox("Distance: "));
+            map.setBoundingBox(x,y,distance);
+        }
     }
 
 }

@@ -8,6 +8,8 @@
 
 package main.model;
 
+import main.dataStructure.Node;
+import main.dataStructure.Point;
 import main.dataStructure.QuadTree;
 import main.dataStructure.Rectangle;
 
@@ -20,10 +22,12 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
         private static final int MAX_BOX = 100000;
 
         private Rectangle boundingBox;
+        private int distance;
 
         public Map2D() {
                 super(new Rectangle(MAP_WIDTH, MAP_HEIGHT));
-                this.boundingBox = new Rectangle(MIN_BOX, MIN_BOX);
+                this.boundingBox = new Rectangle(MAX_BOX, MAX_BOX);
+                this.distance = MIN_BOX;
         }
 
         public Rectangle getBoundingBox() {
@@ -33,32 +37,60 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
         public void setBoundingBox(Rectangle boundingBox) {
                 this.boundingBox = boundingBox;
         }
-
-        public Place findByIdOrName(String id, boolean isId) {
-
-                return null;
+        public void setBoundingBox(int x, int y, int distance) {
+            Point center = new Point(x,y);
+            Rectangle r = new Rectangle(center, distance, distance);
+            setBoundingBox(r);
         }
 
-        public Place[] searchPlaces() {
-                return searchElements(boundingBox, MAX_QUERIES);
+        public void setDistance(DistanceType distanceType) {
+            this.distance = switch (distanceType) {
+                        case NEAR -> MIN_BOX;
+                        case FAR -> MAX_BOX;
+                        case WALKING -> 500;
+                        case BIKE -> 1000;
+                        case MOTORBIKE -> 5000;
+                        case DRIVING -> 8000;
+                };
         }
+
+        public int getDistance() { return distance; }
 
         public enum DistanceType {
                 NEAR, WALKING, BIKE, MOTORBIKE, DRIVING, FAR
         }
-        public Place[] searchPlaces(Place center, DistanceType distanceType) {
-                int distance = switch (distanceType) {
-                    case NEAR -> MIN_BOX;
-                    case FAR -> MAX_BOX;
-                    case WALKING -> 500;
-                    case BIKE -> 1000;
-                    case MOTORBIKE -> 5000;
-                    case DRIVING -> 8000;
-                };
-                Rectangle range = new Rectangle(center, distance, distance);
-                setBoundingBox(range);
-                return searchPlaces();
+
+        public Map2D searchBy(Place placeToCompare) {
+            Map2D results = new Map2D();
+            searchBy(getRoot(), results, placeToCompare);
+            return results;
         }
+
+        private void searchBy(Node<Place> node, Map2D results, Place placeToCompare) {
+            if (node == null) return;
+
+            Rectangle boundary = node.getBoundary();
+
+            if (boundingBox.intersects(boundary)) {
+                if (node.isLeaf() && !node.isEmpty()) {
+                    for (Place place : node.getData()) {
+                        if (place == null) {
+                            break;
+                        }
+                        if (boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
+                            results.insert(place);
+                        }
+                    }
+                } else {
+                    for (Node<Place> child : node.getChildren()) {
+                       searchBy(child, results, placeToCompare);
+                    }
+                }
+            }
+        }
+
+
+
 
 
 

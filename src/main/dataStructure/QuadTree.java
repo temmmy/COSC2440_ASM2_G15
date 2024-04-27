@@ -1,8 +1,10 @@
 package main.dataStructure;
 
-public class QuadTree<T extends Point> {
+import main.model.Place;
+
+public class QuadTree<T extends Place> {
     private static final int MAX_CAPACITY = 4;
-    private Node<T> root;
+    Node<T> root;
 
     public QuadTree() {
         this.root = null;
@@ -10,6 +12,10 @@ public class QuadTree<T extends Point> {
 
     public QuadTree(Rectangle boundary) {
         this.root = new Node<>(boundary);
+    }
+
+    public Node<T> getRoot() {
+        return root;
     }
 
     public void insert(T dataToInsert) {
@@ -80,36 +86,36 @@ public class QuadTree<T extends Point> {
         return null;
     }
 
-    public T[] searchElements(Rectangle boundingBox, int maxResults) {
-        T[] results = (T[]) new Object[maxResults];
-        searchElements(root, boundingBox, maxResults, results, 0);
+    // param: String name / Point location / ServiceType service
+    // operation: String remove/edit/findAll
+    // boundingBox: Point, distance
+    public QuadTree<T> searchElements(Rectangle boundingBox, String param) {
+        QuadTree<T> results = new QuadTree<>(boundingBox);
+        searchElements(root, param, results);
 
         return results;
     }
 
-    private int searchElements(Node<T> node, Rectangle boundingBox, int maxResults, T[] results, int index) {
-        if (node == null || index >= maxResults) {
-            return index;
+    private void searchElements(Node<T> node, String param, QuadTree<T> results) {
+        if (node == null) {
+            return;
         }
 
+        Rectangle boundingBox = results.getRoot().getBoundary();
+
         if (boundingBox.intersects(node.getBoundary())) {
-            if (node.isLeaf() && !node.isEmpty()) {
-                for (T dataPoint : node.getData()) {
-                    if (boundingBox.contains(dataPoint)) {
-                        results[index++] = dataPoint;
-                        if (index >= maxResults) {
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for (Node<T> child : node.getChildren()) {
-                    index = searchElements(child, boundingBox, maxResults, results, index);
-                }
+            for (T dataPoint : node.getData()) {
+                // Can do some logic here
+                results.insert(dataPoint);
+            }
+        } else {
+            for (Node<T> child : node.getChildren()) {
+                searchElements(child, param, results);
             }
         }
-        return index;
     }
+
+
 
     public boolean remove(T dataToRemove) {
         if (root == null) {

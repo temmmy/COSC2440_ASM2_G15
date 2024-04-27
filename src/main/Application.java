@@ -18,10 +18,10 @@ public class Application {
             int x = (int) (Math.random() * mapSize); // Assuming the map size is 1000x1000
             int y = (int) (Math.random() * mapSize);
             String name = "Name " + i;
-            ServiceType[] services = new ServiceType[10];
 
-            Point point = new Point(x, y);
-            Place place = new Place(point, name, services);
+            Place place = new Place();
+            place.setName(name);
+            place.setLocation(x,y);
 
             // Add random services
             int numServicesToAdd = (int) (Math.random() * serviceCount); // Random number of services to add
