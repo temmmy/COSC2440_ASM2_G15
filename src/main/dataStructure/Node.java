@@ -59,24 +59,62 @@ public class Node<T extends Place> {
 
     public boolean insert(T dataToInsert) {
         if (!contains(dataToInsert)) {
-            System.out.println("not contain");
+            System.out.println("Data not in boundary.");
             return false;
         }
-        for (int i = 0; i < data.length; i++) {
 
-            if (data[i] == null) {
-                data[i] = dataToInsert;
-                return true;
+        if (isLeaf()) {
+            for (int i = 0; i < MAX_CAPACITY; i++) {
+                if (data[i] == null) {
+                    data[i] = dataToInsert;
+                    return true;
+                }
+                if (data[i].equals(dataToInsert)) {
+                    System.out.println("Duplicate data: " + data[i]);
+                    return false;
+                }
             }
-            if (data[i].getLocation().equals(dataToInsert.getLocation())){
-                System.out.println("duplicate - " + data[i]);
-                return false;
+            split();
+            distributeData();
+            return insert(dataToInsert);
+        } else {
+            for (Node<T> child : children) {
+                if (child.contains(dataToInsert) && child.insert(dataToInsert)){
+                    return true;
+                }
             }
-
+            System.out.println("No child found for insertion.");
+            return false;
         }
-        return false;
+
     }
 
+    public void distributeData() {
+        if (isLeaf()) {
+            System.out.println("Node is a leaf and cannot distribute data/");
+            return;
+        }
+
+        for (T dataPoint : data) {
+            if (dataPoint == null) break;
+            boolean inserted = false;
+            for (Node<T> child : children) {
+                if (child.contains(dataPoint)) {
+                    child.insert(dataPoint);
+                    inserted = true;
+                    break;
+                }
+            }
+
+            if (!inserted) {
+                System.out.println("Failed to insert " + dataPoint);
+            }
+        }
+
+        for (int i = 0; i < data.length; i++){
+            data[i] = null;
+        }
+    }
     public void split() {
         if (!isLeaf()) {
             return; // Do not split if not a leaf node
@@ -89,8 +127,8 @@ public class Node<T extends Place> {
 
         Rectangle r0 = new Rectangle(x, y, subWidth, subHeight);
         Rectangle r1 = new Rectangle(x + subWidth, y, subWidth, subHeight);
-        Rectangle r2 = new Rectangle(x, y - subHeight, subWidth, subHeight);
-        Rectangle r3 = new Rectangle(x + subWidth, y - subHeight, subWidth, subHeight);
+        Rectangle r2 = new Rectangle(x, y + subHeight, subWidth, subHeight);
+        Rectangle r3 = new Rectangle(x + subWidth, y + subHeight, subWidth, subHeight);
 
         children[0] = new Node<>(r0);
         children[1] = new Node<>(r1);

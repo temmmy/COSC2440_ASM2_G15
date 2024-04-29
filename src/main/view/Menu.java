@@ -65,7 +65,7 @@ public class Menu {
                 String[] parts = line.split(",");
                 if (parts.length == 4) {
                     String name = parts[0];
-                    String[] servicesStr = parts[1].split(";");
+                    String[] servicesStr = parts[1].split("\\|");
                     ServiceType[] services = new ServiceType[servicesStr.length];
                     for (int i = 0; i < servicesStr.length; i++) {
                         services[i] = ServiceType.valueOf(servicesStr[i]);
@@ -73,8 +73,11 @@ public class Menu {
                     int x = Integer.parseInt(parts[2]);
                     int y = Integer.parseInt(parts[3]);
                     Place place = new Place(x,y,name, services);
-                    map.insert(place);
-                    System.out.println("Inserted " + place);
+                    if (map.insert(place)) {
+                        System.out.println("Inserted " + place);
+                    } else {
+                        System.out.println("Error inserting " + place);
+                    }
                 }
             }
         } catch (IOException | NumberFormatException e) {
@@ -264,7 +267,7 @@ public class Menu {
 
     public void displayMenu() {
         header("Map Structure");
-        map.display();
+        map.displayData();
         returnToMain();
     }
 

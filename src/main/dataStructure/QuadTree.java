@@ -18,14 +18,18 @@ public class QuadTree<T extends Place> {
         return root;
     }
 
-    public void insert(T dataToInsert) {
-        insert(root, dataToInsert);
+    public boolean insert(T dataToInsert) {
+        if (root == null) {
+            System.out.println("Root is not set.");
+            return false;
+        }
+        return insert(root, dataToInsert);
     }
 
     private boolean insert(Node<T> node, T dataToInsert) {
-        if (node == null) {
-            return false;
-        }
+//        if (node == null) {
+//            return false;
+//        }
 
         if (!node.contains(dataToInsert)) {
             return false;
@@ -36,11 +40,8 @@ public class QuadTree<T extends Place> {
                     // Split the leaf node if it's full
                     node.split();
                     // Recursively try to insert into children after splitting
-                    for (Node<T> child : node.getChildren()) {
-                        if (insert(child, dataToInsert)) {
-                            return true;
-                        }
-                    }
+                    node.distributeData();
+                    return insert(node, dataToInsert);
                 } else {
                     node.insert(dataToInsert);
                     return true;
@@ -105,7 +106,6 @@ public class QuadTree<T extends Place> {
 
         if (boundingBox.intersects(node.getBoundary())) {
             for (T dataPoint : node.getData()) {
-                // Can do some logic here
                 results.insert(dataPoint);
             }
         } else {
@@ -159,4 +159,31 @@ public class QuadTree<T extends Place> {
             }
         }
     }
+
+    public void displayData() {
+        if (root == null) {
+            System.out.println("Map is empty.");
+        } else {
+            displayData(root);
+        }
+    }
+
+    private void displayData(Node<T> node) {
+        if (node == null) return;
+
+        // Check each child node for data if the current node is not a leaf
+        if (!node.isLeaf()) {
+            for (Node<T> child : node.getChildren()) {
+                displayData(child);
+            }
+        } else {
+            // This is a leaf node, display all non-null data points
+            for (T dataPoint : node.getData()) {
+                if (dataPoint != null) {
+                    System.out.println(dataPoint);
+                }
+            }
+        }
+    }
+
 }
