@@ -137,4 +137,20 @@ public class Node<T extends Place> {
 
     }
 
+    public boolean remove(T dataToRemove) {
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != null && data[i].equals(dataToRemove)) {
+                data[i] = null;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeChild() {
+        for (int i = 0; i < children.length; i++) {
+            children[i] = null;
+        }
+    }
+
 }

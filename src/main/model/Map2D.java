@@ -21,7 +21,6 @@ public class Map2D extends QuadTree<Place> {
         private static final int MIN_BOX = 100;
         private static final int MAX_BOX = 100000;
 
-        private int numPlaces;
         private Rectangle boundingBox;
         private int distance;
 
@@ -29,12 +28,7 @@ public class Map2D extends QuadTree<Place> {
                 super(new Rectangle(MAP_WIDTH, MAP_HEIGHT));
                 this.boundingBox = new Rectangle(MAX_BOX, MAX_BOX);
                 this.distance = MIN_BOX;
-                this.numPlaces = 0;
         }
-
-
-
-        public int getNumPlaces() { return numPlaces; }
 
         public Rectangle getBoundingBox() {
                 return boundingBox;
@@ -66,38 +60,57 @@ public class Map2D extends QuadTree<Place> {
                 NEAR, WALKING, BIKE, MOTORBIKE, DRIVING, FAR
         }
 
-        public Map2D searchBy(Place placeToCompare) {
-            Map2D results = new Map2D();
-            searchBy(getRoot(), results, placeToCompare);
-            return results;
-        }
+//        public Map2D searchBy(Place placeToCompare) {
+//            Map2D results = new Map2D();
+//            searchBy(getRoot(), results, placeToCompare);
+//            return results;
+//        }
+//
+//        private void searchBy(Node<Place> node, Map2D results, Place placeToCompare) {
+//            if (node == null) return;
+//
+//            Rectangle boundary = node.getBoundary();
+//
+//            if (boundingBox.intersects(boundary)) {
+//                if (node.isLeaf() && !node.isEmpty()) {
+//                    for (Place place : node.getData()) {
+//                        if (place == null) {
+//                            break;
+//                        }
+//                        if (boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
+//                            results.insert(place);
+//                        }
+//                    }
+//                } else {
+//                    for (Node<Place> child : node.getChildren()) {
+//                       searchBy(child, results, placeToCompare);
+//                    }
+//                }
+//            }
+//        }
 
-        private void searchBy(Node<Place> node, Map2D results, Place placeToCompare) {
+    public Place[] searchBy(Place placeToCompare) {
+            Place[] results = new Place[this.getCount()];
+            searchBy(getRoot(), results, placeToCompare, 0);
+            return results;
+    }
+
+    private void searchBy(Node<Place> node, Place[] results, Place placeToCompare, int i){
             if (node == null) return;
 
-            Rectangle boundary = node.getBoundary();
-
-            if (boundingBox.intersects(boundary)) {
-                if (node.isLeaf() && !node.isEmpty()) {
-                    for (Place place : node.getData()) {
-                        if (place == null) {
-                            break;
-                        }
-                        if (boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
-                            results.insert(place);
+            if (boundingBox.intersects(node.getBoundary())){
+                if (node.isLeaf()){
+                    for (Place place : node.getData()){
+                        if (place != null && boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
+                            results[i] = place;
                         }
                     }
                 } else {
-                    for (Node<Place> child : node.getChildren()) {
-                       searchBy(child, results, placeToCompare);
+                    for (Node<Place> child : node.getChildren()){
+                        searchBy(child, results, placeToCompare, i + 1);
                     }
                 }
             }
-        }
-
-
-
-
-
+    }
 
 }

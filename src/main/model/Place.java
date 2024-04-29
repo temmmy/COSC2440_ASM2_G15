@@ -11,6 +11,7 @@ package main.model;
 import main.dataStructure.Point;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Place extends Point {
         private static final int MAX_SERVICES = 10;
@@ -123,5 +124,19 @@ public class Place extends Point {
                         ", services=[" + serviceStr + "]" + '\'' +
                         ", location=(x=" + this.getX() + ", y=" + this.getY() + ")" +
                         '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                if (!super.equals(o)) return false;
+                Place place = (Place) o;
+                return serviceSize == place.serviceSize && Objects.equals(name, place.name) && Objects.deepEquals(services, place.services);
+        }
+
+        @Override
+        public int hashCode() {
+                return Objects.hash(super.hashCode(), name, Arrays.hashCode(services), serviceSize);
         }
 }

@@ -10,16 +10,30 @@ package main.model;
 
 import main.dataStructure.Rectangle;
 
-public class BoundingBox extends Rectangle {
-    // Inherits topLeftX, topLeftY, w, h
-    private Place center;
+public class BoundingBox {
+    private static final int MAX_QUERIES = 50;
+    private Rectangle boundary;
+    private Place[] places;
 
-    public BoundingBox(Place center) {
-        super(center);
-        this.center = center;
+    public BoundingBox(Rectangle boundary, Place[] places) {
+        this.boundary = boundary;
+        this.places = places;
     }
 
-    public BoundingBox(String name) {
-
+    public Rectangle getBoundary() {
+        return boundary;
     }
+
+    public void setBoundary(Rectangle boundary) {
+        this.boundary = boundary;
+    }
+
+    public Place[] getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(Place[] places) {
+        this.places = places;
+    }
+
 }

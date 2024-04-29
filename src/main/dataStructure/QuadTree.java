@@ -5,13 +5,22 @@ import main.model.Place;
 public class QuadTree<T extends Place> {
     private static final int MAX_CAPACITY = 4;
     Node<T> root;
+    private int count;
 
     public QuadTree() {
+
         this.root = null;
+        count = 0;
     }
 
     public QuadTree(Rectangle boundary) {
+
         this.root = new Node<>(boundary);
+        count = 0;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public Node<T> getRoot() {
@@ -44,6 +53,7 @@ public class QuadTree<T extends Place> {
                     return insert(node, dataToInsert);
                 } else {
                     node.insert(dataToInsert);
+                    count++;
                     return true;
             }
         } else {
@@ -58,79 +68,33 @@ public class QuadTree<T extends Place> {
         return false;
     }
 
-
-    public T dfs(T dataPoint) {
-        return dfs(root, dataPoint);
-    }
-
-    private T dfs(Node<T> node, T dataPoint) {
-        if (node == null) {
-            return null;
-        }
-
-        if (node.contains(dataPoint)) {
-            if (!node.isLeaf()) {
-                for (Node<T> child : node.getChildren()) {
-                    T result = dfs(child, dataPoint);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-            }
-
-            for (T data : node.getData()) {
-                if (data.equals(dataPoint)) {
-                    return data;
-                }
-            }
-        }
-        return null;
-    }
-
-    // param: String name / Point location / ServiceType service
-    // operation: String remove/edit/findAll
-    // boundingBox: Point, distance
-    public QuadTree<T> searchElements(Rectangle boundingBox, String param) {
-        QuadTree<T> results = new QuadTree<>(boundingBox);
-        searchElements(root, param, results);
-
-        return results;
-    }
-
-    private void searchElements(Node<T> node, String param, QuadTree<T> results) {
-        if (node == null) {
-            return;
-        }
-
-        Rectangle boundingBox = results.getRoot().getBoundary();
-
-        if (boundingBox.intersects(node.getBoundary())) {
-            for (T dataPoint : node.getData()) {
-                results.insert(dataPoint);
-            }
-        } else {
-            for (Node<T> child : node.getChildren()) {
-                searchElements(child, param, results);
-            }
-        }
-    }
-
-
-
     public boolean remove(T dataToRemove) {
-        if (root == null) {
-            return false;
-        }
         return remove(null, root, dataToRemove);
     }
 
     private boolean remove(Node<T> parent, Node<T> node, T dataToRemove) {
-        return false;
-    }
+        if (node == null) return false;
 
-    private void mergeNode(Node<T> parent, Node<T> node) {
-        parent.setData(node.getData());
-        parent.setChildren(null);
+        if (node.contains(dataToRemove)) {
+            if (node.isLeaf()) {
+                boolean removed = node.remove(dataToRemove);
+                if (removed) {
+                    if (parent != null) {
+                        parent.removeChild();
+                    }
+                }
+                return removed;
+            } else {
+                for (Node<T> child : node.getChildren()) {
+                    if (remove(node, child, dataToRemove)) {
+                        count--;
+                        return true; // Element found and remove in child node
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public void display() {
@@ -162,7 +126,7 @@ public class QuadTree<T extends Place> {
 
     public void displayData() {
         if (root == null) {
-            System.out.println("Map is empty.");
+            System.out.println("Root is not set.");
         } else {
             displayData(root);
         }

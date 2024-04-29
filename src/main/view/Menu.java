@@ -196,9 +196,21 @@ public class Menu {
 
     public void removeMenu() {
         header("REMOVE A PLACE");
+        setBoundingBox();
         Place partialPlace = createPartialPlace();
 
-        Place placeToRemove = map.searchBy(partialPlace).getRoot().getData()[0];
+        Place[] results = map.searchBy(partialPlace);
+        Place placeToRemove = null;
+        for (Place place : results) {
+            if (place != null) {
+                placeToRemove = place;
+                break;
+            }
+        }
+
+        System.out.println("Place to removed: " + placeToRemove);
+
+
         if (placeToRemove == null) {
             System.out.println("Place not found!");
             removeMenu();
@@ -215,9 +227,11 @@ public class Menu {
 
     public void editMenu() {
         header("EDIT A PLACE");
+        setBoundingBox();
         Place partialPlace = createPartialPlace();
 
-        Place placeToEdit = map.searchBy(partialPlace).getRoot().getData()[0];
+        Place[] results = map.searchBy(partialPlace);
+        Place placeToEdit = null;
         if (placeToEdit == null) {
             System.out.println("Place not found!");
             editMenu();
@@ -237,6 +251,8 @@ public class Menu {
                     if (services[i] == null) {
                         placeToEdit.addService(pickedService);
                         services = placeToEdit.getServices();
+                        System.out.println("Service " + pickedService + " is added.");
+                        System.out.println("Place is updated: " + placeToEdit);
                     } else {
                         if (services[i].equals(pickedService)) {
                             System.out.println("This place already has the service.");
@@ -260,6 +276,7 @@ public class Menu {
             ServiceType serviceToRemove = services[choice];
             placeToEdit.removeService(serviceToRemove);
             System.out.println("Service " + serviceToRemove  + " is removed!");
+            System.out.println("Place is updated: " + placeToEdit);
         }
 
         returnToMain();
@@ -275,8 +292,11 @@ public class Menu {
         header("FIND PLACES");
         setBoundingBox();
         Place placeToCompare = createPartialPlace();
-        Map2D results = map.searchBy(placeToCompare);
-        results.displayData();
+        Place[] results = map.searchBy(placeToCompare);
+        for (Place place : results) {
+            if (place != null)
+                System.out.println(place);
+        }
         returnToMain();
     }
 
