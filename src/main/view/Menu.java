@@ -276,7 +276,7 @@ public class Menu {
         setBoundingBox();
         Place placeToCompare = createPartialPlace();
         Map2D results = map.searchBy(placeToCompare);
-        results.display();
+        results.displayData();
         returnToMain();
     }
 
