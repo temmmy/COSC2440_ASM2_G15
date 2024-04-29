@@ -13,7 +13,7 @@ import main.dataStructure.Point;
 import main.dataStructure.QuadTree;
 import main.dataStructure.Rectangle;
 
-public class Map2D extends QuadTree<Place> implements IMap2D {
+public class Map2D extends QuadTree<Place> {
         private static final int MAP_WIDTH = 10000000;
         private static final int MAP_HEIGHT = 10000000;
         private static final int MAX_PLACES = 100000000;
@@ -21,6 +21,7 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
         private static final int MIN_BOX = 100;
         private static final int MAX_BOX = 100000;
 
+        private int numPlaces;
         private Rectangle boundingBox;
         private int distance;
 
@@ -28,7 +29,12 @@ public class Map2D extends QuadTree<Place> implements IMap2D {
                 super(new Rectangle(MAP_WIDTH, MAP_HEIGHT));
                 this.boundingBox = new Rectangle(MAX_BOX, MAX_BOX);
                 this.distance = MIN_BOX;
+                this.numPlaces = 0;
         }
+
+
+
+        public int getNumPlaces() { return numPlaces; }
 
         public Rectangle getBoundingBox() {
                 return boundingBox;

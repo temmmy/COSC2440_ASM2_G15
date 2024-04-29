@@ -6,6 +6,9 @@ import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -33,6 +36,7 @@ public class Menu {
         System.out.println("4. Display Places");
         System.out.println("5. Search Places");
         System.out.println("6. Exit");
+        System.out.println("7. Load Places");
         System.out.print("> Enter your choice: ");
 
         int choice = scanner.nextInt();
@@ -45,15 +49,46 @@ public class Menu {
             case 4 -> displayMenu();
             case 5 -> searchMenu();
             case 6 -> exit();
+            case 7 -> loadPlaces();
             default -> System.out.println("Invalid choice");
 
+        }
+    }
+
+    private void loadPlaces() {
+        String fileName = "src/resources/places.txt";
+        header("LOADING MAP...");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)))  {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    String name = parts[0];
+                    String[] servicesStr = parts[1].split(";");
+                    ServiceType[] services = new ServiceType[servicesStr.length];
+                    for (int i = 0; i < servicesStr.length; i++) {
+                        services[i] = ServiceType.valueOf(servicesStr[i]);
+                    }
+                    int x = Integer.parseInt(parts[2]);
+                    int y = Integer.parseInt(parts[3]);
+                    Place place = new Place(x,y,name, services);
+                    map.insert(place);
+                    System.out.println("Inserted " + place);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error loading places from file.");
+            e.printStackTrace();
+        } finally {
+            returnToMain();
         }
     }
 
     private void returnToMain() {
         try {
             System.out.println("Returning to Main Menu...");
-            Thread.sleep(3000);
+            Thread.sleep(2000);
             mainMenu();
         } catch (InterruptedException e) {
             System.out.println("Something went wrong");
@@ -158,8 +193,9 @@ public class Menu {
 
     public void removeMenu() {
         header("REMOVE A PLACE");
-        String name = fieldBox("Name of place you want to remove");
-        Place placeToRemove = null;
+        Place partialPlace = createPartialPlace();
+
+        Place placeToRemove = map.searchBy(partialPlace).getRoot().getData()[0];
         if (placeToRemove == null) {
             System.out.println("Place not found!");
             removeMenu();
@@ -182,7 +218,6 @@ public class Menu {
         if (placeToEdit == null) {
             System.out.println("Place not found!");
             editMenu();
-            return;
         }
         System.out.println("Found the place: " + placeToEdit);
         ServiceType[] services = placeToEdit.getServices();
@@ -191,7 +226,7 @@ public class Menu {
         if (operation.equalsIgnoreCase("ADD")) {
             if (services.length > 10) {
                 System.out.println("Max number of services (10) is reached!");
-                return;
+                editMenu();
             } else {
                 System.out.println(">>> Add a Service <<<");
                 ServiceType pickedService = pickAService();
@@ -202,7 +237,7 @@ public class Menu {
                     } else {
                         if (services[i].equals(pickedService)) {
                             System.out.println("This place already has the service.");
-                            return;
+                            editMenu();
                         }
                     }
                 }
@@ -211,7 +246,7 @@ public class Menu {
             System.out.println(">>> Remove a service <<<");
             if (services.length == 0 || services[0] == null) {
                 System.out.println("This place has no services.");
-                return;
+                editMenu();
             }
             System.out.println("Choose a service to remove: ");
             for (int i = 0; i < services.length; i++) {
@@ -237,7 +272,7 @@ public class Menu {
         header("FIND PLACES");
         setBoundingBox();
         Place placeToCompare = createPartialPlace();
-        QuadTree<Place> results = map.searchBy(placeToCompare);
+        Map2D results = map.searchBy(placeToCompare);
         results.display();
         returnToMain();
     }

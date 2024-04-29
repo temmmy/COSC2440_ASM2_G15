@@ -58,11 +58,11 @@ public class QuadTree<T extends Place> {
     }
 
 
-    public Node<T> dfs(T dataPoint) {
+    public T dfs(T dataPoint) {
         return dfs(root, dataPoint);
     }
 
-    private Node<T> dfs(Node<T> node, T dataPoint) {
+    private T dfs(Node<T> node, T dataPoint) {
         if (node == null) {
             return null;
         }
@@ -70,7 +70,7 @@ public class QuadTree<T extends Place> {
         if (node.contains(dataPoint)) {
             if (!node.isLeaf()) {
                 for (Node<T> child : node.getChildren()) {
-                    Node<T> result = dfs(child, dataPoint);
+                    T result = dfs(child, dataPoint);
                     if (result != null) {
                         return result;
                     }
@@ -79,7 +79,7 @@ public class QuadTree<T extends Place> {
 
             for (T data : node.getData()) {
                 if (data.equals(dataPoint)) {
-                    return node;
+                    return data;
                 }
             }
         }
