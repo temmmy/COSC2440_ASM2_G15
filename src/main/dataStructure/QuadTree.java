@@ -8,15 +8,13 @@ public class QuadTree<T extends Place> {
     private int count;
 
     public QuadTree() {
-
         this.root = null;
-        count = 0;
+        this.count = 0;
     }
 
     public QuadTree(Rectangle boundary) {
-
         this.root = new Node<>(boundary);
-        count = 0;
+        this.count = 0;
     }
 
     public int getCount() {
@@ -80,7 +78,11 @@ public class QuadTree<T extends Place> {
                 boolean removed = node.remove(dataToRemove);
                 if (removed) {
                     if (parent != null) {
-                        parent.removeChild();
+                         if (parent.removeChild()) {
+                             System.out.println("Merge node and " + dataToRemove + "is removed.");
+                         } else {
+                             System.out.println(dataToRemove + "is removed.");
+                         };
                     }
                 }
                 return removed;

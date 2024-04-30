@@ -59,6 +59,14 @@ public class Place extends Point {
                 return services;
         }
 
+        public int distance(Place place) {
+                Point p1 = getLocation();
+                Point p2 = place.getLocation();
+
+                return p1.distance(p2);
+
+        }
+
         public boolean isFullServices() {
                 return serviceSize == MAX_SERVICES;
         }

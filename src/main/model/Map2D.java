@@ -105,7 +105,11 @@ public class Map2D extends QuadTree<Place> {
             if (boundingBox.intersects(node.getBoundary())){
                 if (node.isLeaf()){
                     for (Place place : node.getData()){
-                        if (place != null && boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
+                        if (place != null &&
+                                boundingBox.contains(place.getLocation()) &&
+                                place.partialEquals(placeToCompare) &&
+                                place.distance(boundingBox.getCenter()) == boundingBox.getWidth()/2) {
+
                             results[currentIndex++] = place;
 
 //                            System.out.println("index added: " + currentIndex);

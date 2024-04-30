@@ -1,7 +1,5 @@
 package main.view;
 
-import main.dataStructure.QuadTree;
-import main.dataStructure.Rectangle;
 import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
@@ -9,7 +7,6 @@ import main.model.ServiceType;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Menu {
@@ -37,6 +34,7 @@ public class Menu {
         System.out.println("5. Search Places");
         System.out.println("6. Exit");
         System.out.println("7. Load Places");
+        System.out.println("8. Display Tree");
         System.out.print("> Enter your choice: ");
 
         int choice = scanner.nextInt();
@@ -50,9 +48,16 @@ public class Menu {
             case 5 -> searchMenu();
             case 6 -> exit();
             case 7 -> loadPlaces();
+            case 8 -> displayTree();
             default -> System.out.println("Invalid choice");
 
         }
+    }
+
+    private void displayTree() {
+        header("TREE MAP");
+        map.display();
+        returnToMain();
     }
 
     private void loadPlaces() {
@@ -145,7 +150,6 @@ public class Menu {
         System.out.println("Inserting *" + newPlace.getName() + "* into the map...");
         map.insert(newPlace);
         System.out.println("Insert a Place successfully!");
-        // Return to mainMenu
 
         returnToMain();
 
@@ -257,7 +261,6 @@ public class Menu {
             editMenu();
         }
         System.out.println("Found the place: " + placeToEdit);
-        ServiceType[] services = placeToEdit.getServices();
         System.out.println("Do you want to add or remove a service?");
         String operation = fieldBox("ADD or REMOVE");
         if (operation.equalsIgnoreCase("ADD")) {
@@ -288,13 +291,15 @@ public class Menu {
     }
 
     private void setBoundingBox() {
+        System.out.println("Center: " + map.getBoundingBox().getCenter());
+        System.out.println("Bounding box: " + map.getBoundingBox());
         System.out.println("Do you want to change location? (Type YES or blank)");
         String choice = fieldBox("your choice: ");
         if (choice.equalsIgnoreCase("YES")) {
             int x = Integer.parseInt(fieldBox("x-coordinate: "));
             int y = Integer.parseInt(fieldBox("y-coordinate: "));
             int distance = Integer.parseInt(fieldBox("Distance: "));
-            map.setBoundingBox(x,y,distance);
+            map.setBoundingBox(x,y,distance*2);
         }
     }
 

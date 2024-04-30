@@ -147,10 +147,16 @@ public class Node<T extends Place> {
         return false;
     }
 
-    public void removeChild() {
+    public boolean removeChild() {
+
         for (int i = 0; i < children.length; i++) {
-            children[i] = null;
+            if (children[i] != null) return false;
         }
+
+        for (Node<T> child : children) {
+            child = null;
+        }
+        return true;
     }
 
 }

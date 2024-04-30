@@ -52,9 +52,8 @@ public class Rectangle {
         this.topLeftY = p.getY();
     }
 
-    public void grow(int h, int v) {
-        this.width += 2 * h;
-        this.height += 2 * v;
+    public Point getCenter() {
+        return new Point(topLeftX + width / 2, topLeftY + height / 2);
     }
 
     public boolean intersects(Rectangle r){

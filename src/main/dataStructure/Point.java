@@ -28,6 +28,10 @@ public class Point {
         return y;
     }
 
+    public int distance(Point p) {
+        return Math.abs(x - p.x) + Math.abs(y - p.y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
