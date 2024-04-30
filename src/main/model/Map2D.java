@@ -91,26 +91,36 @@ public class Map2D extends QuadTree<Place> {
 
     public Place[] searchBy(Place placeToCompare) {
             Place[] results = new Place[this.getCount()];
-            searchBy(getRoot(), results, placeToCompare, 0);
+            this.currentIndex = 0;
+            searchBy(getRoot(), results, placeToCompare);
             return results;
     }
 
-    private void searchBy(Node<Place> node, Place[] results, Place placeToCompare, int i){
+    private int currentIndex = 0;
+
+    private void searchBy(Node<Place> node, Place[] results, Place placeToCompare){
             if (node == null) return;
+//            System.out.println(currentIndex);
 
             if (boundingBox.intersects(node.getBoundary())){
                 if (node.isLeaf()){
                     for (Place place : node.getData()){
                         if (place != null && boundingBox.contains(place.getLocation()) && place.partialEquals(placeToCompare)) {
-                            results[i] = place;
+                            results[currentIndex++] = place;
+
+//                            System.out.println("index added: " + currentIndex);
                         }
                     }
                 } else {
                     for (Node<Place> child : node.getChildren()){
-                        searchBy(child, results, placeToCompare, i + 1);
+                        searchBy(child, results, placeToCompare);
                     }
                 }
             }
+    }
+
+    private Place[] sortedPlaces(String param) {
+        return null;
     }
 
 }

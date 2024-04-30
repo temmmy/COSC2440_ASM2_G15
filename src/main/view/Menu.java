@@ -140,19 +140,7 @@ public class Menu {
         Place newPlace = new Place();
         newPlace.setLocation(x,y);
         newPlace.setName(name);
-
-        while (true) {
-            ServiceType service = pickAService();
-            if (service != null) {
-                if (newPlace.addService(service)) {
-                    System.out.println(newPlace);
-                } else {
-                    System.out.println("Duplicate service or Services is full for this place.");
-                };
-            } else {
-                break;
-            }
-        }
+        addServiceMenu(newPlace);
 
         System.out.println("Inserting *" + newPlace.getName() + "* into the map...");
         map.insert(newPlace);
@@ -161,6 +149,53 @@ public class Menu {
 
         returnToMain();
 
+    }
+
+    private void addServiceMenu(Place place) {
+        while (true) {
+            System.out.println(">>> Add a service <<<");
+            if (place.isFullServices()) {
+                System.out.println("Number of services has reached maximum capacity (10).");
+                break;
+            }
+
+            ServiceType service = pickAService();
+            if (service == null) { break; }
+
+            if (place.addService(service)) {
+                  System.out.println(service + " is added.");
+                  System.out.println(place);
+            } else {
+                 System.out.println("Duplicate service or Services is full for this place.");
+            }
+
+        }
+    }
+
+    private void removeServiceMenu(Place place) {
+        while (true) {
+            System.out.println(">>> Remove a service <<<");
+            ServiceType[] services = place.getServices();
+            if (services.length == 0 || services[0] == null) {
+                System.out.println("This place has no services.");
+                break;
+            }
+            System.out.println("Choose a service to remove: ");
+            for (int i = 0; i < place.getServiceSize(); i++) {
+                    System.out.println(i + 1 + ". " + services[i]);
+            }
+            String choiceStr = fieldBox("your choice");
+            if (choiceStr.isBlank()) break;
+            int choice = Integer.parseInt(choiceStr);
+            if (choice < 1 || choice > place.getServiceSize()) {
+                System.out.println("Invalid choice!");
+                break;
+            }
+            ServiceType serviceToRemove = services[choice - 1];
+            place.removeService(serviceToRemove);
+            System.out.println("Service " + serviceToRemove + " is removed!");
+            System.out.println("Place is updated: " + place);
+        }
     }
 
     public Place createPartialPlace() {
@@ -196,21 +231,9 @@ public class Menu {
 
     public void removeMenu() {
         header("REMOVE A PLACE");
-        setBoundingBox();
-        Place partialPlace = createPartialPlace();
 
-        Place[] results = map.searchBy(partialPlace);
-        Place placeToRemove = null;
-        for (Place place : results) {
-            if (place != null) {
-                placeToRemove = place;
-                break;
-            }
-        }
-
+        Place placeToRemove = getPlace();
         System.out.println("Place to removed: " + placeToRemove);
-
-
         if (placeToRemove == null) {
             System.out.println("Place not found!");
             removeMenu();
@@ -227,11 +250,8 @@ public class Menu {
 
     public void editMenu() {
         header("EDIT A PLACE");
-        setBoundingBox();
-        Place partialPlace = createPartialPlace();
 
-        Place[] results = map.searchBy(partialPlace);
-        Place placeToEdit = null;
+        Place placeToEdit = getPlace();
         if (placeToEdit == null) {
             System.out.println("Place not found!");
             editMenu();
@@ -241,42 +261,9 @@ public class Menu {
         System.out.println("Do you want to add or remove a service?");
         String operation = fieldBox("ADD or REMOVE");
         if (operation.equalsIgnoreCase("ADD")) {
-            if (services.length > 10) {
-                System.out.println("Max number of services (10) is reached!");
-                editMenu();
-            } else {
-                System.out.println(">>> Add a Service <<<");
-                ServiceType pickedService = pickAService();
-                for (int i = 0; i < services.length; i++) {
-                    if (services[i] == null) {
-                        placeToEdit.addService(pickedService);
-                        services = placeToEdit.getServices();
-                        System.out.println("Service " + pickedService + " is added.");
-                        System.out.println("Place is updated: " + placeToEdit);
-                    } else {
-                        if (services[i].equals(pickedService)) {
-                            System.out.println("This place already has the service.");
-                            editMenu();
-                        }
-                    }
-                }
-            }
+            addServiceMenu(placeToEdit);
         } else if (operation.equalsIgnoreCase("REMOVE")) {
-            System.out.println(">>> Remove a service <<<");
-            if (services.length == 0 || services[0] == null) {
-                System.out.println("This place has no services.");
-                editMenu();
-            }
-            System.out.println("Choose a service to remove: ");
-            for (int i = 0; i < services.length; i++) {
-                if (services[i] != null)
-                    System.out.println(i + ". " + services[i]);
-            }
-            int choice = Integer.parseInt(fieldBox("your choice"));
-            ServiceType serviceToRemove = services[choice];
-            placeToEdit.removeService(serviceToRemove);
-            System.out.println("Service " + serviceToRemove  + " is removed!");
-            System.out.println("Place is updated: " + placeToEdit);
+            removeServiceMenu(placeToEdit);
         }
 
         returnToMain();
@@ -294,8 +281,8 @@ public class Menu {
         Place placeToCompare = createPartialPlace();
         Place[] results = map.searchBy(placeToCompare);
         for (Place place : results) {
-            if (place != null)
-                System.out.println(place);
+            if (place == null) { break; }
+            System.out.println(place);
         }
         returnToMain();
     }
@@ -309,6 +296,18 @@ public class Menu {
             int distance = Integer.parseInt(fieldBox("Distance: "));
             map.setBoundingBox(x,y,distance);
         }
+    }
+
+    private Place getPlace() {
+        map.setBoundingBox(map.getRoot().getBoundary());
+        Place placeToCompare = createPartialPlace();
+        Place[] results = map.searchBy(placeToCompare);
+        for (int i = 0; i < results.length; i++) {
+            if (results[i] == null) { break; }
+            System.out.println(i+1 + ". " + results[i]);
+        }
+        int placeIndex = Integer.parseInt(fieldBox("your choice: "));
+        return results[placeIndex - 1];
     }
 
 }

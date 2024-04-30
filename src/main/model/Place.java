@@ -59,16 +59,23 @@ public class Place extends Point {
                 return services;
         }
 
-        public boolean addService(ServiceType newService) {
-                if (serviceSize >= MAX_SERVICES) { return false; } // services is full
+        public boolean isFullServices() {
+                return serviceSize == MAX_SERVICES;
+        }
 
-                for (int i = 0; i < serviceSize; i++) {
-                        if (services[i].name().equals(newService.name())) {
-                                return false; // service already exists
+        public int getServiceSize() {
+                return serviceSize;
+        }
+
+        public boolean addService(ServiceType newService) {
+                if (serviceSize > MAX_SERVICES) { return false; } // services is full
+
+                for (ServiceType service : services) {
+                        if (service == newService) {
+                                return false;
                         }
                 }
-                services[serviceSize] = newService;
-                serviceSize++;
+                services[serviceSize++] = newService;
                 return true;
 
         }
