@@ -99,6 +99,7 @@ public class ArrayList<T> {
     }
 
     public boolean contains(ArrayList<T> elements){
+        if (isEmpty() || elements.isEmpty()) return false;
         for (int i = 0; i < elements.size(); i++) {
             T element = elements.get(i);
             if (!contains(element)) {

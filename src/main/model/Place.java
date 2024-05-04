@@ -90,6 +90,16 @@ public class Place {
                         serviceMatch = services.contains(p.getServices());
                 }
 
+                if (nameMatch) {
+                        System.out.println("name: " + name);
+                }
+                if (locationMatch) {
+                        System.out.println("location: " + location);
+                }
+                if (serviceMatch) {
+                        System.out.println("service");
+                }
+
                 return nameMatch || locationMatch || serviceMatch;
         }
 

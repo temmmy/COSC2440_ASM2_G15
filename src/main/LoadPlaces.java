@@ -1,5 +1,6 @@
 package main;
 
+import main.dataStructure.Point;
 import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
@@ -23,7 +24,7 @@ public class LoadPlaces {
                     }
                     int x = Integer.parseInt(parts[2].trim());
                     int y = Integer.parseInt(parts[3].trim());
-                    Place place = new Place(x, y, name, services);
+                    Place place = new Place(new Point(x,y), name, services);
                     map.insert(place);
                 }
             }
@@ -33,8 +34,8 @@ public class LoadPlaces {
     }
 
     public static void main(String[] args) {
-        Map2D map = new Map2D();
-        loadPlacesFromFile("C:\\Workspace\\COSC2658_ASM3_G21-QTree\\COSC2658_ASM3_G21-QTree\\src\\resources\\places.txt", map);
+        Map2D map = Map2D.getInstance();
+        loadPlacesFromFile("resources\\places.txt", map);
         // Display loaded data to verify
         map.displayData();
     }
