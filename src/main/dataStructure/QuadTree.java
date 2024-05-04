@@ -1,103 +1,19 @@
 package main.dataStructure;
 
+import main.model.BoundingRectangle;
 import main.model.Place;
+import main.model.Node;
 
-public class QuadTree<T extends Place> {
-    private static final int MAX_CAPACITY = 4;
-    Node<T> root;
-    private int count;
+public abstract class QuadTree<T> {
+    protected Node root;
 
-    public QuadTree() {
-        this.root = null;
-        this.count = 0;
-    }
 
-    public QuadTree(Rectangle boundary) {
-        this.root = new Node<>(boundary);
-        this.count = 0;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public Node<T> getRoot() {
-        return root;
-    }
-
-    public boolean insert(T dataToInsert) {
-        if (root == null) {
-            System.out.println("Root is not set.");
-            return false;
-        }
-        return insert(root, dataToInsert);
-    }
-
-    private boolean insert(Node<T> node, T dataToInsert) {
-//        if (node == null) {
-//            return false;
-//        }
-
-        if (!node.contains(dataToInsert)) {
-            return false;
-        }
-
-        if (node.isLeaf()) {
-                if (node.getData()[MAX_CAPACITY - 1] != null) {
-                    // Split the leaf node if it's full
-                    node.split();
-                    // Recursively try to insert into children after splitting
-                    node.distributeData();
-                    return insert(node, dataToInsert);
-                } else {
-                    node.insert(dataToInsert);
-                    count++;
-                    return true;
-            }
-        } else {
-            // If not a leaf, continue searching for appropriate leaf node
-            for (Node<T> child : node.getChildren()) {
-                if (insert(child, dataToInsert)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean remove(T dataToRemove) {
-        return remove(null, root, dataToRemove);
-    }
-
-    private boolean remove(Node<T> parent, Node<T> node, T dataToRemove) {
-        if (node == null) return false;
-
-        if (node.contains(dataToRemove)) {
-            if (node.isLeaf()) {
-                boolean removed = node.remove(dataToRemove);
-                if (removed) {
-                    if (parent != null) {
-                         if (parent.removeChild()) {
-                             System.out.println("Merge node and " + dataToRemove + "is removed.");
-                         } else {
-                             System.out.println(dataToRemove + "is removed.");
-                         };
-                    }
-                }
-                return removed;
-            } else {
-                for (Node<T> child : node.getChildren()) {
-                    if (remove(node, child, dataToRemove)) {
-                        count--;
-                        return true; // Element found and remove in child node
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
+    public abstract int size();
+    public abstract boolean isFull();
+    public abstract boolean isEmpty();
+    public abstract boolean insert(T dataToInsert);
+    public abstract boolean remove(T dataToRemove);
+    public abstract ArrayList<Place> search(BoundingRectangle box, T partialData);
 
     public void display() {
         if (root == null) {
@@ -107,20 +23,22 @@ public class QuadTree<T extends Place> {
         }
     }
 
-    private void display(Node<T> node, int level) {
+    private void display(Node node, int level) {
         for (int i = 0; i < level; i++) {
             System.out.print("Level " + i + ": ");
         }
 
         if (node.isLeaf()) {
             System.out.println("Leaf:");
-            for (T dataPoint : node.getData()) {
-                    System.out.println("  Data point = " + dataPoint);
+            for (int i = 0; i < node.getData().size(); i++) {
+                Place dataPoint = node.getData().get(i);
+                System.out.println("  Data point = " + dataPoint);
             }
 
         } else {
             System.out.println("Node:" + node.getBoundary());
-            for (Node<T> child : node.getChildren()) {
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                Node child = node.getChildren().get(i);
                 display(child, level + 1);
             }
         }
@@ -134,22 +52,23 @@ public class QuadTree<T extends Place> {
         }
     }
 
-    private void displayData(Node<T> node) {
+    private void displayData(Node node) {
         if (node == null) return;
 
         // Check each child node for data if the current node is not a leaf
         if (!node.isLeaf()) {
-            for (Node<T> child : node.getChildren()) {
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                Node child = node.getChildren().get(i);
                 displayData(child);
             }
         } else {
             // This is a leaf node, display all non-null data points
-            for (T dataPoint : node.getData()) {
+            for (int i = 0; i < node.getData().size(); i++) {
+                Place dataPoint = node.getData().get(i);
                 if (dataPoint != null) {
                     System.out.println(dataPoint);
                 }
             }
         }
     }
-
 }

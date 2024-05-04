@@ -3,69 +3,51 @@ package main.dataStructure;
 import java.util.Objects;
 
 public class Rectangle {
-    private int height;
-    private int width;
-    private int topLeftX;
-    private int topLeftY;
+    private final int height;
+    private final int width;
+    private Point topLeft;
+    private Point center;
 
     public Rectangle() {
-        this.topLeftX = 0;
-        this.topLeftY = 0;
+        this.topLeft = new Point();
         this.width = 0;
         this.height = 0;
     }
 
-    public Rectangle(int width, int height){
-        this.topLeftX = this.topLeftY = 0;
+    public Rectangle(int topLeftX, int topLeftY, int width, int height) {
+        this.topLeft = new Point(topLeftX, topLeftY);
         this.width = width;
         this.height = height;
-    }
-
-    public Rectangle(int x, int y, int width, int height) {
-        this.topLeftX = x;
-        this.topLeftY = y;
-        this.width = width;
-        this.height = height;
-    }
-
-    public Rectangle(Point p) {
-        this.topLeftX = p.getX();
-        this.topLeftY = p.getY();
-        this.width = 0;
-        this.height = 0;
     }
 
     public Rectangle(Point center, int width, int height) {
         this.width = width;
         this.height = height;
-        this.topLeftX = center.getX() - width / 2;
-        this.topLeftY = center.getY() - height / 2;
+        this.topLeft = new Point((int) (center.getX() - width / 2.0), (int) (center.getY() - height / 2.0));
     }
 
     public void setLocation(int x, int y) {
-        this.topLeftX = x;
-        this.topLeftY = y;
+        this.topLeft.setLocation(x, y);
     }
 
     public void setLocation(Point p) {
-        this.topLeftX = p.getX();
-        this.topLeftY = p.getY();
+        this.topLeft = p;
     }
 
     public Point getCenter() {
-        return new Point(topLeftX + width / 2, topLeftY + height / 2);
+        return new Point((int) (topLeft.getX() + width / 2.0), (int) (topLeft.getY() - height / 2.0));
     }
 
     public boolean intersects(Rectangle r){
-        return this.topLeftX < r.topLeftX + r.width &&
-                this.topLeftX + this.width > r.topLeftX &&
-                this.topLeftY < r.topLeftY + r.height &&
-                this.topLeftY + this.height > r.topLeftY;
+        return this.topLeft.getX() < r.topLeft.getX() + r.width &&
+                this.topLeft.getX() + this.width > r.topLeft.getX() &&
+                this.topLeft.getY() > r.topLeft.getY() - r.height &&
+                this.topLeft.getY() - this.height < r.topLeft.getY();
     }
 
     public boolean contains(int x, int y) {
-        return x >= this.topLeftX && x <= this.topLeftX + this.width &&
-                y >= this.topLeftY && y <= this.topLeftY + this.height;
+        return x >= this.topLeft.getX() && x <= this.topLeft.getX() + this.width &&
+                y <= this.topLeft.getY() && y >= this.topLeft.getY() - this.height;
     }
 
     public boolean contains(Point point) {
@@ -76,7 +58,7 @@ public class Rectangle {
 
 
     public Point getLocation() {
-        return new Point(this.topLeftX, this.topLeftY);
+        return this.topLeft;
     }
 
     public int getHeight() {
@@ -87,25 +69,17 @@ public class Rectangle {
         return width;
     }
 
-    public int getTopLeftX() {
-        return topLeftX;
-    }
-
-    public int getTopLeftY() {
-        return topLeftY;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rectangle rectangle = (Rectangle) o;
-        return height == rectangle.height && width == rectangle.width && topLeftX == rectangle.topLeftX && topLeftY == rectangle.topLeftY;
+        return height == rectangle.height && width == rectangle.width && topLeft.equals(rectangle.topLeft);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(height, width, topLeftX, topLeftY);
+        return Objects.hash(height, width, topLeft);
     }
 
     @Override
@@ -113,8 +87,7 @@ public class Rectangle {
         return "Rectangle{" +
                 "height=" + height +
                 ", width=" + width +
-                ", topLeftX=" + topLeftX +
-                ", topLeftY=" + topLeftY +
+                ", topLeft=" + topLeft +
                 '}';
     }
 }

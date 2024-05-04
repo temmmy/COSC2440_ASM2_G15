@@ -8,42 +8,27 @@
 
 package main.model;
 
+import main.dataStructure.ArrayList;
 import main.dataStructure.Point;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Place extends Point {
-        private static final int MAX_SERVICES = 10;
+public class Place {
+        public static final int MAX_SERVICES = 10;
         private String name;
-        private ServiceType[] services;
-        private int serviceSize;
+        private ArrayList<ServiceType> services;
+        private Point location;
 
         public Place() {
-                super();
-                this.serviceSize = 0;
-                this.services = new ServiceType[MAX_SERVICES];
+                this.location = new Point();
+                this.services = new ArrayList<>(MAX_SERVICES);
                 this.name = null;
         }
 
-        public Place(Point point, String name, ServiceType[] services) {
-                super(point);
-                this.serviceSize = services.length;
-                this.services = services;
-                this.name = name;
-        }
-
-        public Place (int x, int y, String name, ServiceType[] services) {
-                super(x, y);
-                this.serviceSize = services.length;
-                this.services = services;
-                this.name = name;
-        }
-
-        public Place (int x, int y, String name) {
-                super(x, y);
-                this.serviceSize = 0;
-                this.services = new ServiceType[MAX_SERVICES];
+        public Place(Point location, String name, ServiceType[] services) {
+                this.location = location;
+                this.services = new ArrayList<>(services);
                 this.name = name;
         }
 
@@ -55,8 +40,20 @@ public class Place extends Point {
                 this.name = name;
         }
 
-        public ServiceType[] getServices() {
+        public ArrayList<ServiceType> getServices() {
                 return services;
+        }
+
+        public void setServices(ArrayList<ServiceType> services) {
+                this.services = services;
+        }
+
+        public Point getLocation() {
+                return location;
+        }
+
+        public void setLocation(Point location) {
+                this.location = location;
         }
 
         public int distance(Place place) {
@@ -64,80 +61,52 @@ public class Place extends Point {
                 Point p2 = place.getLocation();
 
                 return p1.distance(p2);
-
-        }
-
-        public boolean isFullServices() {
-                return serviceSize == MAX_SERVICES;
-        }
-
-        public int getServiceSize() {
-                return serviceSize;
         }
 
         public boolean addService(ServiceType newService) {
-                if (serviceSize > MAX_SERVICES) { return false; } // services is full
-
-                for (ServiceType service : services) {
-                        if (service == newService) {
-                                return false;
-                        }
-                }
-                services[serviceSize++] = newService;
-                return true;
+                if (services.contains(newService)) return false;
+                return services.add(newService);
 
         }
 
         public boolean removeService(ServiceType serviceToRemove) {
-                if (serviceSize == 0) { return false; }
-
-                int indexToRemove = -1;
-                for (int i = 0; i < serviceSize; i++) {
-                        if (services[i].name().equals(serviceToRemove.name())) {
-                                indexToRemove = i;
-                                break;
-                        }
-                }
-
-                if (indexToRemove != -1) {
-                        // Shift elements to the left to remove the service
-                        for (int i = indexToRemove; i < serviceSize - 1; i++) {
-                                services[i] = services[i + 1];
-                        }
-                        serviceSize--;
-                        return true;
-                } else {
-                        return false;
-                }
+                return services.remove(serviceToRemove);
         }
 
-        public boolean contain(ServiceType service) {
-                for (ServiceType s : services) {
-                        if (s.equals(service)) return true;
-                }
-                return false;
+        public boolean isFullService() {
+                return services.size() == MAX_SERVICES;
         }
 
-        public boolean partialEquals(Place p){
-            if (p == null) return false;
-            return name.equals(p.getName()) ||
-                    getLocation().equals(p.getLocation()) ||
-                    contain(p.getServices()[0]);
+
+        public boolean partialEquals(Place p) {
+                if (p == null) return false;
+
+                boolean nameMatch = (name != null && name.equals(p.getName()));
+                boolean locationMatch = (location != null && location.equals(p.getLocation()));
+
+                // Checks if there's any common service between this Place and Place p
+                boolean serviceMatch = false;
+                if (services != null && p.getServices() != null) {
+                        serviceMatch = services.contains(p.getServices());
+                }
+
+                return nameMatch || locationMatch || serviceMatch;
         }
+
+
         @Override
         public String toString() {
                 // Convert each ServiceType object to a string
-                String[] serviceStrings = new String[serviceSize];
-                for (int i = 0; i < serviceSize; i++) {
-                        if (services[i] != null)
-                                serviceStrings[i] = services[i].toString();
+                String[] serviceStrings = new String[services.size()];
+                for (int i = 0; i < services.size(); i++) {
+                        serviceStrings[i] = services.get(i).toString();
                 }
                 // Join the service strings with commas
                 String serviceStr = String.join(", ", serviceStrings);
                 return "Place{" +
                         "name='" + name + '\'' +
                         ", services=[" + serviceStr + "]" + '\'' +
-                        ", location=(x=" + this.getX() + ", y=" + this.getY() + ")" +
+                        ", location=" + location +
                         '}';
         }
 
@@ -145,13 +114,12 @@ public class Place extends Point {
         public boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
-                if (!super.equals(o)) return false;
                 Place place = (Place) o;
-                return serviceSize == place.serviceSize && Objects.equals(name, place.name) && Objects.deepEquals(services, place.services);
+                return Objects.equals(getName(), place.getName()) && Objects.equals(getServices(), place.getServices()) && Objects.equals(getLocation(), place.getLocation());
         }
 
         @Override
         public int hashCode() {
-                return Objects.hash(super.hashCode(), name, Arrays.hashCode(services), serviceSize);
+                return Objects.hash(getName(), getServices(), getLocation());
         }
 }

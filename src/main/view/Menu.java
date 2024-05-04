@@ -1,22 +1,24 @@
 package main.view;
 
-import main.model.Map2D;
-import main.model.Place;
-import main.model.ServiceType;
+import main.dataStructure.*;
+import main.model.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Menu {
 
     private final Scanner scanner;
     private Map2D map;
+    private BoundingRectangle box;
 
     public Menu() {
         this.scanner = new Scanner(System.in);
-        this.map = new Map2D();
+        this.map = Map2D.getInstance();
+        this.box = BoundingRectangle.getInstance();
     }
     public void header(String name) {
         System.out.println("=".repeat(40));
@@ -68,7 +70,7 @@ public class Menu {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
+                if (parts.length == Node.MAX_CAPACITY) {
                     String name = parts[0];
                     String[] servicesStr = parts[1].split("\\|");
                     ServiceType[] services = new ServiceType[servicesStr.length];
@@ -77,7 +79,7 @@ public class Menu {
                     }
                     int x = Integer.parseInt(parts[2]);
                     int y = Integer.parseInt(parts[3]);
-                    Place place = new Place(x,y,name, services);
+                    Place place = new Place(new Point(x,y),name, services);
                     if (map.insert(place)) {
                         System.out.println("Inserted " + place);
                     } else {
@@ -114,25 +116,27 @@ public class Menu {
         return scanner.nextLine().trim();
     }
 
-    private ServiceType pickAService() {
-        System.out.println("Choose a service: ");
-        ;
-        for (int i = 0; i < ServiceType.values().length; i++) {
-            System.out.println((i + 1) + ". " + ServiceType.values()[i]);
+    private <T extends Enum<T>> Optional<T> pickAnEnum(Class<T> enumClass) {
+        System.out.println("Choose one of the following options: ");
+
+        T[] enums = enumClass.getEnumConstants();
+        for (int i = 0; i < enums.length; i++) {
+            System.out.println((i + 1) + ". " + enums[i]);
         }
 
         String choiceStr = fieldBox("your choice");
-        if (choiceStr.isBlank()) { return null; };
-
-        int choice = Integer.parseInt(choiceStr);
-
-        if (choice < 1 || choice > ServiceType.values().length) {
+        try {
+            int choice = Integer.parseInt(choiceStr);
+            if (choice < 1 || choice > enums.length) {
+                System.out.println("Invalid choice!");
+                return Optional.empty();
+            } else {
+                return Optional.of(enums[choice - 1]);
+            }
+        } catch (NumberFormatException e) {
             System.out.println("Invalid choice!");
-        } else {
-            return ServiceType.values()[choice - 1];
+            return Optional.empty();
         }
-
-        return null;
     }
 
     public void insertMenu() {
@@ -143,14 +147,16 @@ public class Menu {
         int y = Integer.parseInt(fieldBox("y-coordinate"));
 
         Place newPlace = new Place();
-        newPlace.setLocation(x,y);
+        newPlace.setLocation(new Point(x,y));
         newPlace.setName(name);
         addServiceMenu(newPlace);
 
         System.out.println("Inserting *" + newPlace.getName() + "* into the map...");
-        map.insert(newPlace);
-        System.out.println("Insert a Place successfully!");
-
+        if (map.insert(newPlace)) {
+            System.out.println("Insert a Place successfully!");
+        } else {
+            System.out.println("Insertion failed.");
+        }
         returnToMain();
 
     }
@@ -158,14 +164,18 @@ public class Menu {
     private void addServiceMenu(Place place) {
         while (true) {
             System.out.println(">>> Add a service <<<");
-            if (place.isFullServices()) {
+            if (place.isFullService()) {
                 System.out.println("Number of services has reached maximum capacity (10).");
                 break;
             }
 
-            ServiceType service = pickAService();
-            if (service == null) { break; }
+            Optional<ServiceType> serviceOptional = pickAnEnum(ServiceType.class);
+            if (serviceOptional.isEmpty()) {
+                System.out.println("No valid service type found.");
+                break;
+            }
 
+            ServiceType service = serviceOptional.get();
             if (place.addService(service)) {
                   System.out.println(service + " is added.");
                   System.out.println(place);
@@ -179,23 +189,23 @@ public class Menu {
     private void removeServiceMenu(Place place) {
         while (true) {
             System.out.println(">>> Remove a service <<<");
-            ServiceType[] services = place.getServices();
-            if (services.length == 0 || services[0] == null) {
+            ArrayList<ServiceType> services = place.getServices();
+            if (services.isEmpty()) {
                 System.out.println("This place has no services.");
                 break;
             }
             System.out.println("Choose a service to remove: ");
-            for (int i = 0; i < place.getServiceSize(); i++) {
-                    System.out.println(i + 1 + ". " + services[i]);
+            for (int i = 0; i < place.getServices().size(); i++) {
+                    System.out.println(i + 1 + ". " + services.get(i));
             }
             String choiceStr = fieldBox("your choice");
             if (choiceStr.isBlank()) break;
             int choice = Integer.parseInt(choiceStr);
-            if (choice < 1 || choice > place.getServiceSize()) {
+            if (choice < 1 || choice > place.getServices().size()) {
                 System.out.println("Invalid choice!");
                 break;
             }
-            ServiceType serviceToRemove = services[choice - 1];
+            ServiceType serviceToRemove = services.get(choice - 1);
             place.removeService(serviceToRemove);
             System.out.println("Service " + serviceToRemove + " is removed!");
             System.out.println("Place is updated: " + place);
@@ -203,10 +213,12 @@ public class Menu {
     }
 
     public Place createPartialPlace() {
+
         System.out.println("Attribute of the place: ");
         System.out.println("1. Name");
         System.out.println("2. Location");
         System.out.println("3. Service");
+        System.out.println("4. Search all places");
         int choice = Integer.parseInt(fieldBox("your choice: "));
 
         Place partialPlace = new Place();
@@ -218,11 +230,13 @@ public class Menu {
             case 2:
                 int x = Integer.parseInt(fieldBox("x-coordinate: "));
                 int y = Integer.parseInt(fieldBox("y-coordinate: "));
-                partialPlace.setLocation(x, y);
+                partialPlace.setLocation(new Point(x,y));
                 break;
             case 3:
-                ServiceType service = pickAService();
-                partialPlace.addService(service);
+                addServiceMenu(partialPlace);
+                break;
+            case 4:
+                partialPlace = null;
                 break;
             default:
                 System.out.println("Wrong input.");
@@ -254,7 +268,7 @@ public class Menu {
 
     public void editMenu() {
         header("EDIT A PLACE");
-
+        setBoundingBox();
         Place placeToEdit = getPlace();
         if (placeToEdit == null) {
             System.out.println("Place not found!");
@@ -282,37 +296,42 @@ public class Menu {
         header("FIND PLACES");
         setBoundingBox();
         Place placeToCompare = createPartialPlace();
-        Place[] results = map.searchBy(placeToCompare);
-        for (Place place : results) {
-            if (place == null) { break; }
-            System.out.println(place);
-        }
+        ArrayList<Place> results = map.search(box, placeToCompare);
+        box.showPlaces();
         returnToMain();
     }
 
     private void setBoundingBox() {
-        System.out.println("Center: " + map.getBoundingBox().getCenter());
-        System.out.println("Bounding box: " + map.getBoundingBox());
-        System.out.println("Do you want to change location? (Type YES or blank)");
-        String choice = fieldBox("your choice: ");
-        if (choice.equalsIgnoreCase("YES")) {
+        System.out.println("Center: " + box.getPlaceCenter());
+        System.out.println("Bounding box: " + box.getBoundary());
+        System.out.println("Choose one of the following options: ");
+        System.out.println("1. Change location and distance");
+        System.out.println("2. Search for the whole map.");
+
+        int choice = Integer.parseInt(fieldBox("your choice: "));
+        if (choice == 1) {
             int x = Integer.parseInt(fieldBox("x-coordinate: "));
             int y = Integer.parseInt(fieldBox("y-coordinate: "));
             int distance = Integer.parseInt(fieldBox("Distance: "));
-            map.setBoundingBox(x,y,distance*2);
+            // TO-DO
+            Place center = new Place();
+            center.setLocation(new Point(x,y));
+            box.adjust(center, distance);
+        } else if (choice == 2) {
+            box.clear();
         }
+        System.out.println(box);
     }
 
     private Place getPlace() {
-        map.setBoundingBox(map.getRoot().getBoundary());
         Place placeToCompare = createPartialPlace();
-        Place[] results = map.searchBy(placeToCompare);
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] == null) { break; }
-            System.out.println(i+1 + ". " + results[i]);
+        ArrayList<Place> results = map.search(box, placeToCompare);
+        if (results.isEmpty()) {
+            return null;
         }
+        results.display();
         int placeIndex = Integer.parseInt(fieldBox("your choice: "));
-        return results[placeIndex - 1];
+        return results.get(placeIndex - 1);
     }
 
 }
