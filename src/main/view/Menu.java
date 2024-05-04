@@ -307,18 +307,36 @@ public class Menu {
         System.out.println("Choose one of the following options: ");
         System.out.println("1. Change location and distance");
         System.out.println("2. Search for the whole map.");
+        System.out.println("3. Skip");
 
-        int choice = Integer.parseInt(fieldBox("your choice: "));
+        String choiceStr = fieldBox("your choice: ");
+        if (choiceStr.isBlank()) returnToMain();
+        int choice = Integer.parseInt(choiceStr);
         if (choice == 1) {
             int x = Integer.parseInt(fieldBox("x-coordinate: "));
             int y = Integer.parseInt(fieldBox("y-coordinate: "));
-            int distance = Integer.parseInt(fieldBox("Distance: "));
+            int distance = Integer.parseInt(fieldBox("Distance: (-1 for picking Type)"));
+            if (distance == -1) {
+                Optional<BoundingRectangle.DistanceType> opt = pickAnEnum(BoundingRectangle.DistanceType.class);
+
+                if (opt.isEmpty()) {
+                    System.out.println("Invalid distance!");
+                    returnToMain();
+                }
+                BoundingRectangle.DistanceType distanceType = opt.get();
+                box.setDistanceType(distanceType);
+                Place center = new Place();
+                center.setLocation(new Point(x,y));
+                box.adjust(center, distance);
+            }
             // TO-DO
             Place center = new Place();
             center.setLocation(new Point(x,y));
             box.adjust(center, distance);
         } else if (choice == 2) {
             box.clear();
+        } else if (choice == 3) {
+            return;
         }
         System.out.println(box);
     }

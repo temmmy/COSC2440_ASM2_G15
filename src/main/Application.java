@@ -134,16 +134,6 @@ public class Application {
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         printResult(elapsedTime, failureCount, places.size());
-
-        System.out.print("Retry? (y/n)");
-        Scanner sc = new Scanner(System.in);
-        String retry = sc.next();
-
-        if (retry.equals("y")) {
-            removeTesting();
-        } else {
-            mainMenu();
-        }
     }
 
     private static void searchTesting() {
