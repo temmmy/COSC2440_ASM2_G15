@@ -57,6 +57,8 @@ public class Application {
                 System.out.println(i + ". Failed to Insert: " + place);
             };
             progressBar(i - failureCount, numPlaces);
+            System.out.print(" " + (System.currentTimeMillis() - startTime) + "ms");
+
         }
 
         long endTime = System.currentTimeMillis();

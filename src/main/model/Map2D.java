@@ -36,6 +36,7 @@ public class Map2D extends QuadTree<Place> {
         return numPlaces == 0;
     }
 
+    // TimeO(log n) - O(n), Space O(1)
     @Override
     public boolean insert(Place place){
         if (root == null || numPlaces == MAX_PLACES) return false;
@@ -121,6 +122,7 @@ public class Map2D extends QuadTree<Place> {
         return true;
     }
 
+    // Time O(log n) - O(n), Space: O(log n)
     @Override
     public boolean remove(Place place){
         if (root == null || numPlaces == 0) return false;
@@ -185,6 +187,7 @@ public class Map2D extends QuadTree<Place> {
         return true;
     }
 
+    // Time O(n), Space O(log n)
     @Override
     public ArrayList<Place> search(BoundingRectangle box, Place partialData) {
         search(root, box, partialData);
@@ -218,7 +221,7 @@ public class Map2D extends QuadTree<Place> {
         }
     }
 
-
+    // Time O(n), Space O(log n)
     public Place searchPlace(BoundingRectangle box, Place place) {
         return searchPlace(root, box, place);
 
