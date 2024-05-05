@@ -306,8 +306,9 @@ public class Menu {
         System.out.println("Bounding box: " + box.getBoundary());
         System.out.println("Choose one of the following options: ");
         System.out.println("1. Change location and distance");
-        System.out.println("2. Search for the whole map.");
-        System.out.println("3. Skip");
+        System.out.println("2. Change Sort Option");
+        System.out.println("3. Search for the whole map.");
+        System.out.println("4. Skip");
 
         String choiceStr = fieldBox("your choice: ");
         if (choiceStr.isBlank()) returnToMain();
@@ -334,8 +335,18 @@ public class Menu {
             center.setLocation(new Point(x,y));
             box.adjust(center, distance);
         } else if (choice == 2) {
-            box.clear();
+            Optional<BoundingRectangle.SortOption> sortOptional = pickAnEnum(BoundingRectangle.SortOption.class);
+            if (sortOptional.isPresent()){
+                BoundingRectangle.SortOption sortOption = sortOptional.get();
+                box.setSortOption(sortOption);
+                System.out.println("Set sort option to " + sortOption);
+            } else {
+                System.out.println("Failed to get sort option!");
+            }
         } else if (choice == 3) {
+            box.clear();
+            System.out.println("Set to searching for the whole map.");
+        } else if (choice == 4) {
             return;
         }
         System.out.println(box);
