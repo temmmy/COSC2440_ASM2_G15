@@ -24,19 +24,20 @@ public abstract class QuadTree<T> {
     }
 
     private void display(Node node, int level) {
+        String indent = "";
         for (int i = 0; i < level; i++) {
-            System.out.print("Level " + i + ": ");
+            indent += "  ";
         }
 
         if (node.isLeaf()) {
-            System.out.println("Leaf:");
+            System.out.println(indent + "Node " + level + ": Leaf - " + node.getBoundary());
             for (int i = 0; i < node.getData().size(); i++) {
                 Place dataPoint = node.getData().get(i);
-                System.out.println("  Data point = " + dataPoint);
+                System.out.println(indent + "  Data point = " + dataPoint);
             }
 
         } else {
-            System.out.println("Node:" + node.getBoundary());
+            System.out.println(indent + "Node " + level + ": " + node.getBoundary());
             for (int i = 0; i < node.getChildren().size(); i++) {
                 Node child = node.getChildren().get(i);
                 display(child, level + 1);

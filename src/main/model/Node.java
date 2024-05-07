@@ -58,6 +58,7 @@ public class Node {
     }
 
     public boolean addData(Place place) {
+        if (data.size() >= MAX_CAPACITY) return false;
         return data.add(place);
     }
     public boolean removeData(Place place) {
@@ -66,26 +67,22 @@ public class Node {
 
     @Override
     public String toString() {
-        String[] childrenStrArr = new String[children.size()];
-        String childrenStr = "";
+        StringBuilder childrenStr = new StringBuilder();
         if (!children.isEmpty()) {
+            String[] childrenStrArr = new String[children.size()];
             for (int i = 0; i < children.size(); i++) {
-                if (children.get(i).isLeaf()) {
-                    childrenStrArr[i] = "Leaf";
-                } else {
-                    childrenStrArr[i] = "Node";
-                }
+                childrenStrArr[i] = children.get(i).isLeaf() ? "Leaf" : "Node";
             }
-            childrenStr = String.join(", ", childrenStrArr);
+            childrenStr.append(String.join(", ", childrenStrArr));
         }
 
-        String[] dataStrArr = new String[data.size()];
-        String dataStr = "";
+        StringBuilder dataStr = new StringBuilder();
         if (!data.isEmpty()) {
+            String[] dataStrArr = new String[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                dataStrArr[i] = data.get(i).toString();
+                dataStrArr[i] = data.get(i).getLocation().toString();
             }
-            dataStr = String.join(",", dataStrArr);
+            dataStr.append(String.join(", ", dataStrArr));
         }
 
         return "Node{" +
@@ -94,5 +91,6 @@ public class Node {
                 "], data=[" + dataStr +
                 "]}";
     }
+
 
 }
