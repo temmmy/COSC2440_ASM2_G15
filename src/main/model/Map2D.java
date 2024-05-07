@@ -69,12 +69,13 @@ public class Map2D extends QuadTree<Place> {
                 System.out.println("Place exists in this node or node is full");
                 return false; // Place exists in this node or out of range
             }
-            if (node.addData(place)) {
+            if (node.getData().size() < Node.MAX_CAPACITY) {
+                node.addData(place);
                 return true; // Place added successfully
-            }
+            } else {
             // If node is full of data, split and distribute into 4 child nodes
-            if (split(node)) {
-                distributeData(node);
+                split(node);
+                return insert(node, place);
             }
         }
 
@@ -89,7 +90,7 @@ public class Map2D extends QuadTree<Place> {
     }
 
     private boolean split(Node node) {
-        if (!node.isLeaf())
+        if (!node.isLeaf() || node.getData().size() < Node.MAX_CAPACITY)
             return false;
 
         Rectangle boundary = node.getBoundary();
@@ -109,8 +110,10 @@ public class Map2D extends QuadTree<Place> {
         children.add(new Node(northEast));
         children.add(new Node(southWest));
         children.add(new Node(southEast));
+        node.setChildren(children);
 
         // System.out.println("Split the node is completed.");
+        distributeData(node);
         return true;
     }
 
@@ -118,21 +121,13 @@ public class Map2D extends QuadTree<Place> {
         ArrayList<Place> data = node.getData();
         ArrayList<Node> children = node.getChildren();
 
-        if (data.isEmpty())
-            return true;
-
-        // Distribute Data into new four quadrants (children)
         for (int i = 0; i < data.size(); i++) {
             Place dataPoint = data.get(i);
-
-            for (int j = 0; j < children.size(); j++) {
-                Node child = children.get(j);
-                if (insert(child, dataPoint))
-                    break;
-            }
+            insert(node, dataPoint);
         }
-        data.clear(); // Clear data since this node is not a leaf anymore
-        // System.out.println("Distributed data into new four quadrants.");
+
+        node.clearData();
+
         return true;
     }
 

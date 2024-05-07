@@ -19,7 +19,19 @@ import java.util.Scanner;
 
 public class Application {
     public static void main(String[] args) {
-        mainMenu();
+//        Map2D map = Map2D.getInstance();
+//
+//        map.insert(new Place(new Point(100, 200), "Place 1", new ServiceType[]{ServiceType.CAFE}));
+//        map.insert(new Place(new Point(150, 250), "Place 2", new ServiceType[]{ServiceType.HOSPITAL}));
+//        map.insert(new Place(new Point(300, 400), "Place 3", new ServiceType[]{ServiceType.RESTAURANT}));
+//        map.insert(new Place(new Point(500, 600), "Place 4", new ServiceType[]{ServiceType.HOTEL}));
+//        map.insert(new Place(new Point(700, 800), "Place 5", new ServiceType[]{ServiceType.SCHOOL}));
+//
+//        map.displayData();
+//
+//        map.display();
+
+        start();
     }
 
     private static void start() {

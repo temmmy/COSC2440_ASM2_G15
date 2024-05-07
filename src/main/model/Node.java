@@ -30,9 +30,8 @@ public class Node {
     }
 
     public Node(Rectangle boundary) {
-        this.boundary = boundary;
-        this.children = new ArrayList<>(MAX_CAPACITY);
-        this.data = new ArrayList<>(MAX_CAPACITY);
+        this(boundary, new ArrayList<>(MAX_CAPACITY), new ArrayList<>(MAX_CAPACITY));
+
     }
 
     public Rectangle getBoundary() {
@@ -59,16 +58,21 @@ public class Node {
         this.data = data;
     }
 
+    public void clearData() {
+        data.clear();
+    }
+
     public boolean isLeaf() {
         return children.isEmpty();
     }
 
     public boolean addData(Place place) {
-        if (data.size() >= MAX_CAPACITY) return false;
+        if (place == null && data.size() >= MAX_CAPACITY) return false;
         return data.add(place);
     }
 
     public boolean removeData(Place place) {
+        if (place == null) return false;
         return data.remove(place);
     }
 
