@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.model;
 
 import main.dataStructure.ArrayList;
@@ -10,7 +18,7 @@ public class Map2D extends QuadTree<Place> {
     public int numPlaces;
 
     private Map2D() {
-        Rectangle boundary = new Rectangle(0,MAP_SIDE,MAP_SIDE, MAP_SIDE);
+        Rectangle boundary = new Rectangle(0, MAP_SIDE, MAP_SIDE, MAP_SIDE);
         root = new Node(boundary);
         numPlaces = 0;
     }
@@ -24,7 +32,9 @@ public class Map2D extends QuadTree<Place> {
     }
 
     @Override
-    public int size() { return numPlaces; }
+    public int size() {
+        return numPlaces;
+    }
 
     @Override
     public boolean isFull() {
@@ -38,8 +48,9 @@ public class Map2D extends QuadTree<Place> {
 
     // TimeO(log n) - O(n), Space O(1)
     @Override
-    public boolean insert(Place place){
-        if (root == null || numPlaces == MAX_PLACES) return false;
+    public boolean insert(Place place) {
+        if (root == null || numPlaces == MAX_PLACES)
+            return false;
         if (insert(root, place)) {
             numPlaces++;
             return true;
@@ -49,7 +60,7 @@ public class Map2D extends QuadTree<Place> {
 
     private boolean insert(Node node, Place place) {
         if (!node.getBoundary().contains(place.getLocation())) {
-//            System.out.println("Not fit.");
+            // System.out.println("Not fit.");
             return false; // Does not fit
         }
 
@@ -78,7 +89,8 @@ public class Map2D extends QuadTree<Place> {
     }
 
     private boolean split(Node node) {
-        if (!node.isLeaf()) return false;
+        if (!node.isLeaf())
+            return false;
 
         Rectangle boundary = node.getBoundary();
         ArrayList<Node> children = node.getChildren();
@@ -98,7 +110,7 @@ public class Map2D extends QuadTree<Place> {
         children.add(new Node(southWest));
         children.add(new Node(southEast));
 
-//        System.out.println("Split the node is completed.");
+        // System.out.println("Split the node is completed.");
         return true;
     }
 
@@ -106,7 +118,8 @@ public class Map2D extends QuadTree<Place> {
         ArrayList<Place> data = node.getData();
         ArrayList<Node> children = node.getChildren();
 
-        if (data.isEmpty()) return true;
+        if (data.isEmpty())
+            return true;
 
         // Distribute Data into new four quadrants (children)
         for (int i = 0; i < data.size(); i++) {
@@ -114,18 +127,20 @@ public class Map2D extends QuadTree<Place> {
 
             for (int j = 0; j < children.size(); j++) {
                 Node child = children.get(j);
-                if (insert(child, dataPoint)) break;
+                if (insert(child, dataPoint))
+                    break;
             }
         }
         data.clear(); // Clear data since this node is not a leaf anymore
-//        System.out.println("Distributed data into new four quadrants.");
+        // System.out.println("Distributed data into new four quadrants.");
         return true;
     }
 
     // Time O(log n) - O(n), Space: O(log n)
     @Override
-    public boolean remove(Place place){
-        if (root == null || numPlaces == 0) return false;
+    public boolean remove(Place place) {
+        if (root == null || numPlaces == 0)
+            return false;
         if (remove(null, root, place)) {
             numPlaces--;
             return true;
@@ -134,11 +149,14 @@ public class Map2D extends QuadTree<Place> {
     }
 
     private boolean remove(Node parent, Node node, Place place) {
-        if (node == null || place == null) return false; // Node does not exist
-        if (!node.getBoundary().contains(place.getLocation())) return false; // Not found
+        if (node == null || place == null)
+            return false; // Node does not exist
+        if (!node.getBoundary().contains(place.getLocation()))
+            return false; // Not found
 
         if (node.isLeaf()) {
-            if (node.getData().isEmpty() || !node.getData().contains(place)) return false;
+            if (node.getData().isEmpty() || !node.getData().contains(place))
+                return false;
             node.removeData(place);
             if (parent != null && canMerge(parent)) {
                 merge(parent);
@@ -177,7 +195,8 @@ public class Map2D extends QuadTree<Place> {
         ArrayList<Place> data = new ArrayList<>(Node.MAX_CAPACITY);
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
-            if (!child.isLeaf()) return false;
+            if (!child.isLeaf())
+                return false;
             for (int j = 0; j < child.getData().size(); j++) {
                 data.add(child.getData().get(j));
             }
@@ -196,12 +215,14 @@ public class Map2D extends QuadTree<Place> {
     }
 
     private void search(Node node, BoundingRectangle box, Place partialData) {
-        if (node == null) return;
+        if (node == null)
+            return;
 
         // Skip the branch if the bounding boxes do not intersect
-        if (!node.getBoundary().intersects(box.getBoundary())) return;
+        if (!node.getBoundary().intersects(box.getBoundary()))
+            return;
 
-        if (node.isLeaf()){
+        if (node.isLeaf()) {
             ArrayList<Place> dataPoints = node.getData();
             if (partialData == null) {
                 box.addPlaces(dataPoints);
@@ -228,11 +249,13 @@ public class Map2D extends QuadTree<Place> {
     }
 
     private Place searchPlace(Node node, BoundingRectangle box, Place partialData) {
-        if (node == null) return null;
+        if (node == null)
+            return null;
 
-        if (!node.getBoundary().intersects(box.getBoundary())) return null;
+        if (!node.getBoundary().intersects(box.getBoundary()))
+            return null;
 
-        if (node.isLeaf()){
+        if (node.isLeaf()) {
             if (!node.getData().isEmpty()) {
                 for (int i = 0; i < node.getData().size(); i++) {
                     Place dataPoint = node.getData().get(i);
@@ -250,6 +273,5 @@ public class Map2D extends QuadTree<Place> {
 
         return null;
     }
-
 
 }
