@@ -1,9 +1,15 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.model;
 
 import main.dataStructure.ArrayList;
 import main.dataStructure.Rectangle;
-
-import java.util.Arrays;
 
 public class Node {
     public static final int MAX_CAPACITY = 4;
@@ -61,6 +67,7 @@ public class Node {
         if (data.size() >= MAX_CAPACITY) return false;
         return data.add(place);
     }
+
     public boolean removeData(Place place) {
         return data.remove(place);
     }

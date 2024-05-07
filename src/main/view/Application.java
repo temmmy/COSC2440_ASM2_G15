@@ -1,4 +1,12 @@
-package main;
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
+package main.view;
 
 import main.dataStructure.ArrayList;
 import main.dataStructure.Point;
@@ -6,7 +14,6 @@ import main.model.BoundingRectangle;
 import main.model.Map2D;
 import main.model.Place;
 import main.model.ServiceType;
-import main.view.Menu;
 
 import java.util.Scanner;
 
@@ -51,11 +58,12 @@ public class Application {
             int y = (int) (Math.random() * Map2D.MAP_SIDE);
             String name = "Place " + i;
             ServiceType[] services = ServiceType.values();
-            Place place = new Place(new Point(x,y), name, services);
+            Place place = new Place(new Point(x, y), name, services);
             if (!map.insert(place)) {
                 failureCount++;
                 System.out.println(i + ". Failed to Insert: " + place);
-            };
+            }
+            ;
             progressBar(i - failureCount, numPlaces);
             System.out.print(" " + (System.currentTimeMillis() - startTime) + "ms");
 
@@ -73,14 +81,15 @@ public class Application {
         } else {
             mainMenu();
         }
+        sc.close();
     }
 
     private static void progressBar(int current, int max) {
         int width = 50;
-        double progress = (double) current/max;
+        double progress = (double) current / max;
         int numChars = (int) (progress * width);
-        String progressBar = "[" + "#".repeat(numChars) + " ".repeat(width-numChars) + "]";
-        System.out.print("\r" + progressBar + " " + progress*100 + "%");
+        String progressBar = "[" + "#".repeat(numChars) + " ".repeat(width - numChars) + "]";
+        System.out.print("\r" + progressBar + " " + progress * 100 + "%");
     }
 
     private static ArrayList<Place> generateData(Map2D map) {
@@ -95,12 +104,11 @@ public class Application {
             int y = (int) (Math.random() * Map2D.MAP_SIDE);
             String name = "Place " + i;
             ServiceType[] services = ServiceType.values();
-            Place place = new Place(new Point(x,y), name, services);
+            Place place = new Place(new Point(x, y), name, services);
             if (map.insert(place))
                 places.add(place);
             progressBar(map.numPlaces, numPlaces);
         }
-
 
         System.out.println();
         return places;
@@ -111,7 +119,7 @@ public class Application {
         System.out.println("*".repeat(60));
         System.out.println("Testing data with " + size + " places finished in " + elapsedTime + " ms");
         double failureRate = (double) failureCount / (double) size;
-        System.out.println("Failures: " + failureCount + ", Failure Rate: " + failureRate*100 + "%");
+        System.out.println("Failures: " + failureCount + ", Failure Rate: " + failureRate * 100 + "%");
         System.out.println("*".repeat(60));
     }
 
@@ -127,7 +135,7 @@ public class Application {
         for (int i = 0; i < places.size(); i++) {
             if (!map.remove(places.get(i))) {
                 failureCount++;
-//                System.out.println(i + ". Failed to removed: " + places.get(i));
+                // System.out.println(i + ". Failed to removed: " + places.get(i));
             }
             progressBar(i - failureCount, places.size());
 
@@ -180,6 +188,5 @@ public class Application {
         printResult(endTime - startTime, failureCount, 1);
 
     }
-
 
 }

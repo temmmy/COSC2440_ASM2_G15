@@ -1,5 +1,5 @@
 /** 
-    @author GROUP 15
+    @author GROUP 21
         - Nguyen Chi Nghia s3979170
         - Duong Viet Hoang s3962514
         - Nguyen Huy Anh   s3956092
@@ -11,7 +11,6 @@ package main.model;
 import main.dataStructure.ArrayList;
 import main.dataStructure.Point;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class Place {
@@ -64,7 +63,8 @@ public class Place {
         }
 
         public boolean addService(ServiceType newService) {
-                if (services.contains(newService)) return false;
+                if (services.contains(newService))
+                        return false;
                 return services.add(newService);
 
         }
@@ -77,9 +77,9 @@ public class Place {
                 return services.size() == MAX_SERVICES;
         }
 
-
         public boolean partialEquals(Place p) {
-                if (p == null) return false;
+                if (p == null)
+                        return false;
 
                 boolean nameMatch = (name != null && name.equals(p.getName()));
                 boolean locationMatch = (location != null && location.equals(p.getLocation()));
@@ -103,7 +103,6 @@ public class Place {
                 return nameMatch || locationMatch || serviceMatch;
         }
 
-
         @Override
         public String toString() {
                 // Convert each ServiceType object to a string
@@ -114,18 +113,21 @@ public class Place {
                 // Join the service strings with commas
                 String serviceStr = String.join(", ", serviceStrings);
                 return "Place{" +
-                        "name='" + name + '\'' +
-                        ", services=[" + serviceStr + "]" + '\'' +
-                        ", location=" + location +
-                        '}';
+                                "name='" + name + '\'' +
+                                ", services=[" + serviceStr + "]" + '\'' +
+                                ", location=" + location +
+                                '}';
         }
 
         @Override
         public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (this == o)
+                        return true;
+                if (o == null || getClass() != o.getClass())
+                        return false;
                 Place place = (Place) o;
-                return Objects.equals(getName(), place.getName()) && Objects.equals(getServices(), place.getServices()) && Objects.equals(getLocation(), place.getLocation());
+                return Objects.equals(getName(), place.getName()) && Objects.equals(getServices(), place.getServices())
+                                && Objects.equals(getLocation(), place.getLocation());
         }
 
         @Override

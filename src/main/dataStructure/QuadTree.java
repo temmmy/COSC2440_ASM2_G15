@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.dataStructure;
 
 import main.model.BoundingRectangle;
@@ -7,12 +15,16 @@ import main.model.Node;
 public abstract class QuadTree<T> {
     protected Node root;
 
-
     public abstract int size();
+
     public abstract boolean isFull();
+
     public abstract boolean isEmpty();
+
     public abstract boolean insert(T dataToInsert);
+
     public abstract boolean remove(T dataToRemove);
+
     public abstract ArrayList<Place> search(BoundingRectangle box, T partialData);
 
     public void display() {
@@ -54,7 +66,8 @@ public abstract class QuadTree<T> {
     }
 
     private void displayData(Node node) {
-        if (node == null) return;
+        if (node == null)
+            return;
 
         // Check each child node for data if the current node is not a leaf
         if (!node.isLeaf()) {

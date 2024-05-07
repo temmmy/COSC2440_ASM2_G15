@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.dataStructure;
 
 import java.util.Arrays;
@@ -42,14 +50,16 @@ public class ArrayList<T> {
             return false;
         }
 
-        if (index == size) return add(element);
+        if (index == size)
+            return add(element);
 
         arr[index] = element;
         return true;
     }
 
     public boolean remove(T element) {
-        if (size == 0) return false;
+        if (size == 0)
+            return false;
 
         boolean removed = false;
         for (int i = 0; i < size; i++) {
@@ -57,9 +67,10 @@ public class ArrayList<T> {
                 removed = true;
             }
             if (removed && i < size - 1)
-                arr[i] = arr[i+1]; // Shift elements to the left
+                arr[i] = arr[i + 1]; // Shift elements to the left
         }
-        if (removed) size--;
+        if (removed)
+            size--;
         return removed;
     }
 
@@ -67,13 +78,14 @@ public class ArrayList<T> {
         if (index > size || index < 0) {
             return null;
         }
-         if (!remove(arr[index])) return null;
-         return arr[index];
+        if (!remove(arr[index]))
+            return null;
+        return arr[index];
     }
 
     public boolean contains(T element) {
         for (int i = 0; i < size; i++) {
-            if (arr[i].equals(element)){
+            if (arr[i].equals(element)) {
                 return true;
             }
         }
@@ -82,7 +94,7 @@ public class ArrayList<T> {
 
     public int indexOf(T element) {
         for (int i = 0; i < size; i++) {
-            if (arr[i].equals(element)){
+            if (arr[i].equals(element)) {
                 return i;
             }
         }
@@ -98,8 +110,9 @@ public class ArrayList<T> {
         return true; // All elements are found in the list
     }
 
-    public boolean contains(ArrayList<T> elements){
-        if (isEmpty() || elements.isEmpty()) return false;
+    public boolean contains(ArrayList<T> elements) {
+        if (isEmpty() || elements.isEmpty())
+            return false;
         for (int i = 0; i < elements.size(); i++) {
             T element = elements.get(i);
             if (!contains(element)) {
@@ -109,8 +122,10 @@ public class ArrayList<T> {
         return true; // All elements are found in the list
     }
 
+    public int size() {
+        return size;
+    }
 
-    public int size() { return size; }
     public T[] toArray() {
         return arr;
     }
@@ -124,8 +139,9 @@ public class ArrayList<T> {
     }
 
     public void clear() {
-        if (size == 0) return;
-        for (int i = 0; i < size; i++){
+        if (size == 0)
+            return;
+        for (int i = 0; i < size; i++) {
             arr[i] = null;
         }
         size = 0;
@@ -139,7 +155,7 @@ public class ArrayList<T> {
 
     public void display() {
         for (int i = 0; i < size; i++) {
-            System.out.println(i+1 + ". " + arr[i]);
+            System.out.println(i + 1 + ". " + arr[i]);
         }
     }
 
@@ -149,8 +165,10 @@ public class ArrayList<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ArrayList<?> arrayList = (ArrayList<?>) o;
         return size == arrayList.size && Objects.deepEquals(arr, arrayList.arr);
     }

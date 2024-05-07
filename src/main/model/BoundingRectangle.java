@@ -1,5 +1,5 @@
 /** 
-    @author GROUP 15
+    @author GROUP 21
         - Nguyen Chi Nghia s3979170
         - Duong Viet Hoang s3962514
         - Nguyen Huy Anh   s3956092
@@ -27,6 +27,7 @@ public class BoundingRectangle {
     public enum SortOption {
         DISTANCE_ASC, DISTANCE_DESC, NAME_ASC, NAME_DESC
     }
+
     public enum DistanceType {
         NEAR, WALKING, DRIVING, FAR, MAP
     }
@@ -40,14 +41,13 @@ public class BoundingRectangle {
         setDistance(-1);
     }
 
-    private static class SingletonHelper{
+    private static class SingletonHelper {
         private static final BoundingRectangle INSTANCE = new BoundingRectangle();
     }
 
     public static BoundingRectangle getInstance() {
         return SingletonHelper.INSTANCE;
     }
-
 
     private boolean compareForSort(Place place, Place other) {
         return switch (sortOption) {
@@ -58,7 +58,7 @@ public class BoundingRectangle {
         };
     }
 
-    public void setDistance(int distance){
+    public void setDistance(int distance) {
         if (distance > MIN_DISTANCE && distance < MAX_DISTANCE) {
             this.distance = distance;
             return;
@@ -114,6 +114,7 @@ public class BoundingRectangle {
     public Place getPlaceCenter() {
         return placeCenter;
     }
+
     public void setPlaceCenter(Place center) {
         this.placeCenter = center;
     }
@@ -146,10 +147,11 @@ public class BoundingRectangle {
     }
 
     public void addPlaces(ArrayList<Place> places) {
-        for (int i =0; i < places.size(); i++) {
+        for (int i = 0; i < places.size(); i++) {
             this.addPlace(places.get(i));
         }
     }
+
     public boolean removePlace(Place place) {
         return places.remove(place);
     }
@@ -161,8 +163,9 @@ public class BoundingRectangle {
         }
 
         for (int i = 0; i < places.size(); i++) {
-            if (i >= MAX_QUERIES) break;
-            System.out.println(i+1 + ". Distance: " + places.get(i).distance(placeCenter) + ", " + places.get(i));
+            if (i >= MAX_QUERIES)
+                break;
+            System.out.println(i + 1 + ". Distance: " + places.get(i).distance(placeCenter) + ", " + places.get(i));
         }
     }
 
@@ -171,9 +174,9 @@ public class BoundingRectangle {
         setPlaces(sortedPlaces);
     }
 
-
     public ArrayList<Place> mergeSort(ArrayList<Place> places) {
-        if (places.size() <= 1) return places;
+        if (places.size() <= 1)
+            return places;
 
         int mid = places.size() / 2;
         ArrayList<Place> leftHalf = new ArrayList<>(mid);

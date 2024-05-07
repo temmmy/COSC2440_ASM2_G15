@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.dataStructure;
 
 import java.util.Objects;
@@ -34,8 +42,6 @@ public class Point {
         return (int) Math.sqrt(dx * dx + dy * dy);
     }
 
-
-
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
@@ -51,8 +57,10 @@ public class Point {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Point point = (Point) o;
         return getX() == point.getX() && getY() == point.getY();
     }

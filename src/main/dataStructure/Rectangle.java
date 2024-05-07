@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.dataStructure;
 
 import java.util.Objects;
@@ -38,7 +46,7 @@ public class Rectangle {
         return new Point((int) (topLeft.getX() + width / 2.0), (int) (topLeft.getY() - height / 2.0));
     }
 
-    public boolean intersects(Rectangle r){
+    public boolean intersects(Rectangle r) {
         return this.topLeft.getX() < r.topLeft.getX() + r.width &&
                 this.topLeft.getX() + this.width > r.topLeft.getX() &&
                 this.topLeft.getY() > r.topLeft.getY() - r.height &&
@@ -56,7 +64,6 @@ public class Rectangle {
         return contains(x, y);
     }
 
-
     public Point getLocation() {
         return this.topLeft;
     }
@@ -71,8 +78,10 @@ public class Rectangle {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Rectangle rectangle = (Rectangle) o;
         return height == rectangle.height && width == rectangle.width && topLeft.equals(rectangle.topLeft);
     }

@@ -1,3 +1,11 @@
+/** 
+    @author GROUP 21
+        - Nguyen Chi Nghia s3979170
+        - Duong Viet Hoang s3962514
+        - Nguyen Huy Anh   s3956092
+        - Vu Tien Quang    s3981278
+*/
+
 package main.view;
 
 import main.dataStructure.*;
@@ -20,6 +28,7 @@ public class Menu {
         this.map = Map2D.getInstance();
         this.box = BoundingRectangle.getInstance();
     }
+
     public void header(String name) {
         System.out.println("=".repeat(40));
         System.out.println("*** " + name + " ***");
@@ -66,7 +75,7 @@ public class Menu {
         String fileName = "src/resources/places.txt";
         header("LOADING MAP...");
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)))  {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -79,7 +88,7 @@ public class Menu {
                     }
                     int x = Integer.parseInt(parts[2]);
                     int y = Integer.parseInt(parts[3]);
-                    Place place = new Place(new Point(x,y),name, services);
+                    Place place = new Place(new Point(x, y), name, services);
                     if (map.insert(place)) {
                         System.out.println("Inserted " + place);
                     } else {
@@ -105,6 +114,7 @@ public class Menu {
             e.printStackTrace();
         }
     }
+
     public void exit() {
         System.exit(0);
     }
@@ -147,7 +157,7 @@ public class Menu {
         int y = Integer.parseInt(fieldBox("y-coordinate"));
 
         Place newPlace = new Place();
-        newPlace.setLocation(new Point(x,y));
+        newPlace.setLocation(new Point(x, y));
         newPlace.setName(name);
         addServiceMenu(newPlace);
 
@@ -177,10 +187,10 @@ public class Menu {
 
             ServiceType service = serviceOptional.get();
             if (place.addService(service)) {
-                  System.out.println(service + " is added.");
-                  System.out.println(place);
+                System.out.println(service + " is added.");
+                System.out.println(place);
             } else {
-                 System.out.println("Duplicate service or Services is full for this place.");
+                System.out.println("Duplicate service or Services is full for this place.");
             }
 
         }
@@ -196,10 +206,11 @@ public class Menu {
             }
             System.out.println("Choose a service to remove: ");
             for (int i = 0; i < place.getServices().size(); i++) {
-                    System.out.println(i + 1 + ". " + services.get(i));
+                System.out.println(i + 1 + ". " + services.get(i));
             }
             String choiceStr = fieldBox("your choice");
-            if (choiceStr.isBlank()) break;
+            if (choiceStr.isBlank())
+                break;
             int choice = Integer.parseInt(choiceStr);
             if (choice < 1 || choice > place.getServices().size()) {
                 System.out.println("Invalid choice!");
@@ -230,7 +241,7 @@ public class Menu {
             case 2:
                 int x = Integer.parseInt(fieldBox("x-coordinate: "));
                 int y = Integer.parseInt(fieldBox("y-coordinate: "));
-                partialPlace.setLocation(new Point(x,y));
+                partialPlace.setLocation(new Point(x, y));
                 break;
             case 3:
                 addServiceMenu(partialPlace);
@@ -245,7 +256,6 @@ public class Menu {
         System.out.println(partialPlace);
         return partialPlace;
     }
-
 
     public void removeMenu() {
         header("REMOVE A PLACE");
@@ -311,7 +321,8 @@ public class Menu {
         System.out.println("4. Skip");
 
         String choiceStr = fieldBox("your choice: ");
-        if (choiceStr.isBlank()) returnToMain();
+        if (choiceStr.isBlank())
+            returnToMain();
         int choice = Integer.parseInt(choiceStr);
         if (choice == 1) {
             int x = Integer.parseInt(fieldBox("x-coordinate: "));
@@ -327,16 +338,16 @@ public class Menu {
                 BoundingRectangle.DistanceType distanceType = opt.get();
                 box.setDistanceType(distanceType);
                 Place center = new Place();
-                center.setLocation(new Point(x,y));
+                center.setLocation(new Point(x, y));
                 box.adjust(center, distance);
             }
             // TO-DO
             Place center = new Place();
-            center.setLocation(new Point(x,y));
+            center.setLocation(new Point(x, y));
             box.adjust(center, distance);
         } else if (choice == 2) {
             Optional<BoundingRectangle.SortOption> sortOptional = pickAnEnum(BoundingRectangle.SortOption.class);
-            if (sortOptional.isPresent()){
+            if (sortOptional.isPresent()) {
                 BoundingRectangle.SortOption sortOption = sortOptional.get();
                 box.setSortOption(sortOption);
                 System.out.println("Set sort option to " + sortOption);
