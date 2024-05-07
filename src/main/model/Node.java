@@ -13,6 +13,7 @@ import main.dataStructure.Rectangle;
 
 public class Node {
     public static final int MAX_CAPACITY = 4;
+    private Node parent;
     private Rectangle boundary;
     private ArrayList<Node> children;
     private ArrayList<Place> data;
@@ -23,15 +24,23 @@ public class Node {
         this.data = new ArrayList<>(MAX_CAPACITY);
     }
 
-    public Node(Rectangle boundary, ArrayList<Node> children, ArrayList<Place> data) {
+    public Node(Rectangle boundary, ArrayList<Node> children, ArrayList<Place> data, Node parent) {
         this.boundary = boundary;
         this.children = children;
         this.data = data;
+        this.parent = parent;
     }
 
-    public Node(Rectangle boundary) {
-        this(boundary, new ArrayList<>(MAX_CAPACITY), new ArrayList<>(MAX_CAPACITY));
+    public Node(Rectangle boundary, Node parent) {
+        this(boundary, new ArrayList<>(MAX_CAPACITY), new ArrayList<>(MAX_CAPACITY), parent);
+    }
 
+    public Node getParent() {
+        return parent;
+    }
+
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 
     public Rectangle getBoundary() {
@@ -97,7 +106,8 @@ public class Node {
         }
 
         return "Node{" +
-                "boundary=" + boundary +
+                "parent=" + parent +
+                ", boundary=" + boundary +
                 ", children=[" + childrenStr +
                 "], data=[" + dataStr +
                 "]}";

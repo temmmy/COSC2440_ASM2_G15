@@ -19,7 +19,7 @@ public class Map2D extends QuadTree<Place> {
 
     private Map2D() {
         Rectangle boundary = new Rectangle(0, MAP_SIDE, MAP_SIDE, MAP_SIDE);
-        root = new Node(boundary);
+        root = new Node(boundary, null);
         numPlaces = 0;
     }
 
@@ -106,10 +106,10 @@ public class Map2D extends QuadTree<Place> {
         Rectangle southWest = new Rectangle(x, y - subHeight, subWidth, subHeight);
         Rectangle southEast = new Rectangle(x + subWidth, y - subHeight, subWidth, subHeight);
 
-        children.add(new Node(northWest));
-        children.add(new Node(northEast));
-        children.add(new Node(southWest));
-        children.add(new Node(southEast));
+        children.add(new Node(northWest, node));
+        children.add(new Node(northEast, node));
+        children.add(new Node(southWest, node));
+        children.add(new Node(southEast, node));
         node.setChildren(children);
 
         // System.out.println("Split the node is completed.");
@@ -136,11 +136,11 @@ public class Map2D extends QuadTree<Place> {
     public boolean remove(Place place) {
         if (root == null || numPlaces == 0)
             return false;
-        if (remove(null, root, place)) {
+        boolean success = remove(null, root, place);
+        if (success) {
             numPlaces--;
-            return true;
         }
-        return false;
+        return success;
     }
 
     private boolean remove(Node parent, Node node, Place place) {
@@ -150,13 +150,12 @@ public class Map2D extends QuadTree<Place> {
             return false; // Not found
 
         if (node.isLeaf()) {
-            if (node.getData().isEmpty() || !node.getData().contains(place))
-                return false;
-            node.removeData(place);
-            if (parent != null && canMerge(parent)) {
-                merge(parent);
+            boolean removed = node.removeData(place);
+//            System.out.println(removed);
+            if (removed && parent != null) {
+                recursiveMerge(parent);
             }
-            return true;
+            return removed;
         }
 
         // Attempt to find and remove in child nodes
@@ -164,41 +163,46 @@ public class Map2D extends QuadTree<Place> {
             Node child = node.getChildren().get(i);
             if (remove(node, child, place)) {
                 return true;
-            }
+            };
         }
 
         return false;
     }
 
-    // Check if the child nodes of a node have total less than 4 data.
-    private boolean canMerge(Node node) {
-        ArrayList<Node> children = node.getChildren();
-        int count = 0;
-        for (int i = 0; i < children.size(); i++) {
-            Node child = children.get(i);
-            count += child.getData().size();
-            if (count > Node.MAX_CAPACITY) {
-                return false;
-            }
+    private void recursiveMerge(Node node) {
+        Node current = node;
+        while (current != null && !current.isLeaf() && canMerge(current)) {
+            merge(current);
+            current = current.getParent();
         }
-        return true;
     }
 
-    private boolean merge(Node node) {
+    // Check if the child nodes of a node have total less than 4 data.
+    public boolean canMerge(Node node) {
         ArrayList<Node> children = node.getChildren();
-        // Iterate in reverse order to avoid removal skipping issue
-        ArrayList<Place> data = new ArrayList<>(Node.MAX_CAPACITY);
+        int totalSize = 0;
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
-            if (!child.isLeaf())
+            if (!child.isLeaf()) {
                 return false;
+            }
+            totalSize += child.getData().size();
+        }
+        return totalSize <= Node.MAX_CAPACITY;
+    }
+
+    private void merge(Node node) {
+        ArrayList<Node> children = node.getChildren();
+        // Iterate in reverse order to avoid removal skipping issue
+        ArrayList<Place> mergedData = new ArrayList<>(Node.MAX_CAPACITY);
+        for (int i = 0; i < children.size(); i++) {
+            Node child = children.get(i);
             for (int j = 0; j < child.getData().size(); j++) {
-                data.add(child.getData().get(j));
+                mergedData.add(child.getData().get(j));
             }
         }
-        node.setChildren(new ArrayList<>(Node.MAX_CAPACITY));
-        node.setData(data);
-        return true;
+        node.setData(mergedData);
+        node.setChildren(new ArrayList<>(Node.MAX_CAPACITY)); // Clear children to make this node a leaf
     }
 
     // Time O(n), Space O(log n)
