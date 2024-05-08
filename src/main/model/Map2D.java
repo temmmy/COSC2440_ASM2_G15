@@ -65,9 +65,11 @@ public class Map2D extends QuadTree<Place> {
         }
 
         if (node.isLeaf()) {
-            if (node.getData().contains(place)) {
-                System.out.println("Place exists in this node or node is full");
-                return false; // Place exists in this node or out of range
+            for (int i = 0; i < node.getData().size(); i++) {
+                Place dataPoint = node.getData().get(i);
+                if (dataPoint.equals(place) || dataPoint.getLocation().equals(place.getLocation())) {
+                    return false;
+                }
             }
             if (node.getData().size() < Node.MAX_CAPACITY) {
                 node.addData(place);
