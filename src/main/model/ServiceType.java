@@ -23,5 +23,6 @@ public enum ServiceType {
     PARK,
     CINEMA,
     GYM,
-    STORE
+    STORE,
+    LIBRARY
 }
