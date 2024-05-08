@@ -12,41 +12,79 @@ import main.dataStructure.ArrayList;
 import main.dataStructure.QuadTree;
 import main.dataStructure.Rectangle;
 
+/**
+ * Represents a 2D map that uses a QuadTree data structure to store and retrieve
+ * places.
+ * The map has a fixed side length and a maximum number of places it can hold.
+ * It supports operations like insertion, removal, and searching for places.
+ */
 public class Map2D extends QuadTree<Place> {
     public static final int MAP_SIDE = 10000000;
     public static final int MAX_PLACES = 100000000;
     public int numPlaces;
 
+    /**
+     * Constructs a new Map2D object with a root node and initializes the number of
+     * places to 0.
+     */
     private Map2D() {
         Rectangle boundary = new Rectangle(0, MAP_SIDE, MAP_SIDE, MAP_SIDE);
         root = new Node(boundary, null);
         numPlaces = 0;
     }
 
+    /**
+     * Helper class to implement the Singleton design pattern for Map2D.
+     */
     private static class SingletonHelper {
         private static final Map2D INSTANCE = new Map2D();
     }
 
+    /**
+     * Returns the singleton instance of Map2D.
+     * 
+     * @return The singleton instance of Map2D.
+     */
     public static Map2D getInstance() {
         return SingletonHelper.INSTANCE;
     }
 
+    /**
+     * Returns the number of places in the map.
+     * 
+     * @return The number of places in the map.
+     */
     @Override
     public int size() {
         return numPlaces;
     }
 
+    /**
+     * Checks if the map is full and cannot hold more places.
+     * 
+     * @return True if the map is full, false otherwise.
+     */
     @Override
     public boolean isFull() {
         return numPlaces == MAX_PLACES;
     }
 
+    /**
+     * Checks if the map is empty and does not contain any places.
+     * 
+     * @return True if the map is empty, false otherwise.
+     */
     @Override
     public boolean isEmpty() {
         return numPlaces == 0;
     }
 
-    // TimeO(log n) - O(n), Space O(1)
+    /**
+     * Inserts a place into the map.
+     * 
+     * @param place The place to insert.
+     * @return True if the place was inserted successfully, false otherwise.
+     */
     @Override
     public boolean insert(Place place) {
         if (root == null || numPlaces == MAX_PLACES)
@@ -58,24 +96,32 @@ public class Map2D extends QuadTree<Place> {
         return false;
     }
 
+    /**
+     * Recursive helper method to insert a place into the map.
+     * 
+     * @param node  The current node being processed.
+     * @param place The place to insert.
+     * @return True if the place was inserted successfully, false otherwise.
+     */
     private boolean insert(Node node, Place place) {
         if (!node.getBoundary().contains(place.getLocation())) {
-            // System.out.println("Not fit.");
-            return false; // Does not fit
+            // Place does not fit in the current node's boundary
+            return false;
         }
 
         if (node.isLeaf()) {
+            // Check if the place already exists in the node's data
             for (int i = 0; i < node.getData().size(); i++) {
                 Place dataPoint = node.getData().get(i);
                 if (dataPoint.equals(place) || dataPoint.getLocation().equals(place.getLocation())) {
-                    return false;
+                    return false; // Place already exists
                 }
             }
             if (node.getData().size() < Node.MAX_CAPACITY) {
                 node.addData(place);
                 return true; // Place added successfully
             } else {
-            // If node is full of data, split and distribute into 4 child nodes
+                // If node is full of data, split and distribute into 4 child nodes
                 split(node);
                 return insert(node, place);
             }
@@ -91,6 +137,12 @@ public class Map2D extends QuadTree<Place> {
         return false; // Unable to insert into any child nodes
     }
 
+    /**
+     * Splits a node into 4 child nodes and redistributes the data.
+     * 
+     * @param node The node to split.
+     * @return True if the split was successful, false otherwise.
+     */
     private boolean split(Node node) {
         if (!node.isLeaf() || node.getData().size() < Node.MAX_CAPACITY)
             return false;
@@ -114,11 +166,16 @@ public class Map2D extends QuadTree<Place> {
         children.add(new Node(southEast, node));
         node.setChildren(children);
 
-        // System.out.println("Split the node is completed.");
         distributeData(node);
         return true;
     }
 
+    /**
+     * Distributes the data in a node among its child nodes after a split.
+     * 
+     * @param node The node to distribute the data from.
+     * @return True if the distribution was successful, false otherwise.
+     */
     private boolean distributeData(Node node) {
         ArrayList<Place> data = node.getData();
         ArrayList<Node> children = node.getChildren();
@@ -133,7 +190,12 @@ public class Map2D extends QuadTree<Place> {
         return true;
     }
 
-    // Time O(log n) - O(n), Space: O(log n)
+    /**
+     * Removes a place from the map.
+     * 
+     * @param place The place to remove.
+     * @return True if the place was removed successfully, false otherwise.
+     */
     @Override
     public boolean remove(Place place) {
         if (root == null || numPlaces == 0)
@@ -145,6 +207,14 @@ public class Map2D extends QuadTree<Place> {
         return success;
     }
 
+    /**
+     * Recursive helper method to remove a place from the map.
+     * 
+     * @param parent The parent node of the current node being processed.
+     * @param node   The current node being processed.
+     * @param place  The place to remove.
+     * @return True if the place was removed successfully, false otherwise.
+     */
     private boolean remove(Node parent, Node node, Place place) {
         if (node == null || place == null)
             return false; // Node does not exist
@@ -153,7 +223,6 @@ public class Map2D extends QuadTree<Place> {
 
         if (node.isLeaf()) {
             boolean removed = node.removeData(place);
-//            System.out.println(removed);
             if (removed && parent != null) {
                 recursiveMerge(parent);
             }
@@ -165,12 +234,18 @@ public class Map2D extends QuadTree<Place> {
             Node child = node.getChildren().get(i);
             if (remove(node, child, place)) {
                 return true;
-            };
+            }
         }
 
         return false;
     }
 
+    /**
+     * Recursively merges child nodes of a node if they have a total of less than 4
+     * data points.
+     * 
+     * @param node The node to perform the merge on.
+     */
     private void recursiveMerge(Node node) {
         Node current = node;
         while (current != null && !current.isLeaf() && canMerge(current)) {
@@ -179,7 +254,12 @@ public class Map2D extends QuadTree<Place> {
         }
     }
 
-    // Check if the child nodes of a node have total less than 4 data.
+    /**
+     * Checks if the child nodes of a node have a total of less than 4 data points.
+     * 
+     * @param node The node to check.
+     * @return True if the child nodes can be merged, false otherwise.
+     */
     public boolean canMerge(Node node) {
         ArrayList<Node> children = node.getChildren();
         int totalSize = 0;
@@ -193,9 +273,13 @@ public class Map2D extends QuadTree<Place> {
         return totalSize <= Node.MAX_CAPACITY;
     }
 
+    /**
+     * Merges the child nodes of a node into a single node.
+     * 
+     * @param node The node to perform the merge on.
+     */
     private void merge(Node node) {
         ArrayList<Node> children = node.getChildren();
-        // Iterate in reverse order to avoid removal skipping issue
         ArrayList<Place> mergedData = new ArrayList<>(Node.MAX_CAPACITY);
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
@@ -207,7 +291,13 @@ public class Map2D extends QuadTree<Place> {
         node.setChildren(new ArrayList<>(Node.MAX_CAPACITY)); // Clear children to make this node a leaf
     }
 
-    // Time O(n), Space O(log n)
+    /**
+     * Searches for places within a bounding rectangle that match a partial data.
+     * 
+     * @param box         The bounding rectangle to search within.
+     * @param partialData The partial data to match.
+     * @return An ArrayList of places that match the search criteria.
+     */
     @Override
     public ArrayList<Place> search(BoundingRectangle box, Place partialData) {
         search(root, box, partialData);
@@ -215,6 +305,14 @@ public class Map2D extends QuadTree<Place> {
         return box.getPlaces();
     }
 
+    /**
+     * Recursive helper method to search for places within a bounding rectangle that
+     * match a partial data.
+     * 
+     * @param node        The current node being processed.
+     * @param box         The bounding rectangle to search within.
+     * @param partialData The partial data to match.
+     */
     private void search(Node node, BoundingRectangle box, Place partialData) {
         if (node == null)
             return;
@@ -243,12 +341,26 @@ public class Map2D extends QuadTree<Place> {
         }
     }
 
-    // Time O(n), Space O(log n)
+    /**
+     * Searches for a specific place within a bounding rectangle.
+     * 
+     * @param box   The bounding rectangle to search within.
+     * @param place The place to search for.
+     * @return The place if found, null otherwise.
+     */
     public Place searchPlace(BoundingRectangle box, Place place) {
         return searchPlace(root, box, place);
-
     }
 
+    /**
+     * Recursive helper method to search for a specific place within a bounding
+     * rectangle.
+     * 
+     * @param node         The current node being processed.
+     * @param box          The bounding rectangle to search within.
+     * @param placeInQuery The place to search for.
+     * @return The place if found, null otherwise.
+     */
     private Place searchPlace(Node node, BoundingRectangle box, Place placeInQuery) {
         if (node == null)
             return null;
@@ -277,5 +389,4 @@ public class Map2D extends QuadTree<Place> {
 
         return null;
     }
-
 }
