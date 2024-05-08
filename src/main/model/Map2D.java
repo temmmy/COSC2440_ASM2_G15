@@ -247,7 +247,7 @@ public class Map2D extends QuadTree<Place> {
 
     }
 
-    private Place searchPlace(Node node, BoundingRectangle box, Place partialData) {
+    private Place searchPlace(Node node, BoundingRectangle box, Place placeInQuery) {
         if (node == null)
             return null;
 
@@ -258,7 +258,7 @@ public class Map2D extends QuadTree<Place> {
             if (!node.getData().isEmpty()) {
                 for (int i = 0; i < node.getData().size(); i++) {
                     Place dataPoint = node.getData().get(i);
-                    if (dataPoint.equals(partialData)) {
+                    if (dataPoint.equals(placeInQuery)) {
                         return dataPoint;
                     }
                 }
@@ -267,7 +267,10 @@ public class Map2D extends QuadTree<Place> {
 
         for (int i = 0; i < node.getChildren().size(); i++) {
             Node child = node.getChildren().get(i);
-            return searchPlace(child, box, partialData);
+            Place result = searchPlace(child, box, placeInQuery);
+            if (result != null) {
+                return result;
+            }
         }
 
         return null;

@@ -31,7 +31,7 @@ public class Rectangle {
     public Rectangle(Point center, int width, int height) {
         this.width = width;
         this.height = height;
-        this.topLeft = new Point((int) (center.getX() - width / 2.0), (int) (center.getY() - height / 2.0));
+        this.topLeft = new Point((int) (center.getX() - width / 2.0), (int) (center.getY() + height / 2.0));
     }
 
     public void setLocation(int x, int y) {

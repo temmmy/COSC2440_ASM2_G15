@@ -91,13 +91,13 @@ public class Place {
                 }
 
                 if (nameMatch) {
-                        System.out.println("name: " + name);
+                        System.out.println("name matched: " + name);
                 }
                 if (locationMatch) {
-                        System.out.println("location: " + location);
+                        System.out.println("location matched: " + location);
                 }
                 if (serviceMatch) {
-                        System.out.println("service");
+                        System.out.println("service matched");
                 }
 
                 return nameMatch || locationMatch || serviceMatch;

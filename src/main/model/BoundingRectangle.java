@@ -33,12 +33,13 @@ public class BoundingRectangle {
     }
 
     private BoundingRectangle() {
-        this.boundary = new Rectangle();
-        this.places = new ArrayList<>(Map2D.MAX_PLACES);
-        this.placeCenter = new Place();
         this.sortOption = SortOption.DISTANCE_DESC;
         this.distanceType = DistanceType.NEAR;
         setDistance(-1);
+        this.boundary = new Rectangle(0,Map2D.MAP_SIDE, (int) this.distance*2, (int) this.distance * 2);
+        this.places = new ArrayList<>(Map2D.MAX_PLACES);
+        this.placeCenter = new Place();
+        this.placeCenter.setLocation(boundary.getCenter());
     }
 
     private static class SingletonHelper {
@@ -58,27 +59,28 @@ public class BoundingRectangle {
         };
     }
 
+    public void setInitialDistance() {
+        this.distance = switch (distanceType) {
+            case NEAR -> MIN_DISTANCE;
+            case WALKING -> MIN_DISTANCE * 10;
+            case DRIVING -> MIN_DISTANCE * 100;
+            case FAR -> MAX_DISTANCE;
+            case MAP -> Map2D.MAP_SIDE / 2.0;
+        };
+    }
+
     public void setDistance(int distance) {
-        if (distance > MIN_DISTANCE && distance < MAX_DISTANCE) {
+        if (distance >= MIN_DISTANCE && distance <= MAX_DISTANCE) {
             this.distance = distance;
             return;
         }
-
-        if (distance == -1) {
-            this.distance = switch (distanceType) {
-                case NEAR -> MIN_DISTANCE;
-                case WALKING -> MIN_DISTANCE * 10;
-                case DRIVING -> MIN_DISTANCE * 100;
-                case FAR -> MAX_DISTANCE;
-                case MAP -> Map2D.MAP_SIDE / 2.0;
-            };
-        }
+        setInitialDistance();
     }
 
     public void adjust(Place center, int distance) {
         this.placeCenter = center;
         setDistance(distance);
-        this.boundary = new Rectangle(center.getLocation(), (int) this.distance, (int) this.distance);
+        this.boundary = new Rectangle(center.getLocation(), (int) this.distance * 2, (int) this.distance * 2);
         places.clear();
     }
 
@@ -132,7 +134,9 @@ public class BoundingRectangle {
     }
 
     public void setDistanceType(DistanceType distanceType) {
+
         this.distanceType = distanceType;
+        setInitialDistance();
     }
 
     public double getDistance() {
