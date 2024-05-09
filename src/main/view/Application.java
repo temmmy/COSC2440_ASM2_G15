@@ -17,52 +17,73 @@ import main.model.ServiceType;
 
 import java.util.Scanner;
 
+/**
+ * The `Application` class represents the entry point of the program. It
+ * contains the `main` method
+ * which is responsible for starting the application and displaying the main
+ * menu to the user.
+ * The class also provides methods for handling different menu options such as
+ * loading testing data,
+ * removing data, and searching data.
+ * 
+ * This class interacts with other classes such as `Map2D`, `BoundingRectangle`,
+ * `Place`, and `Menu`
+ * to perform various operations related to managing places on a map.
+ * 
+ * The `Application` class is part of the `main.view` package.
+ */
 public class Application {
     public static void main(String[] args) {
         // Insert > 4 places to an empty map - Title
-//        Map2D map = Map2D.getInstance();
-//
-//        Place point_1 = new Place(new Point(100, 200), "Place 1", new ServiceType[]{ServiceType.CAFE});
-//        Place point_2 = new Place(new Point(150, 250), "Place 2", new ServiceType[]{ServiceType.HOSPITAL});
-//        map.insert(point_1);
-//        map.insert(point_2);
-//        map.insert(new Place(new Point(300, 400), "Place 3", new ServiceType[]{ServiceType.RESTAURANT}));
-//        map.insert(new Place(new Point(500, 600), "Place 4", new ServiceType[]{ServiceType.HOTEL}));
-//        map.insert(new Place(new Point(700, 800), "Place 5", new ServiceType[]{ServiceType.SCHOOL}));
-//
-//        System.out.println("Map Places:");
-//        map.displayData();
-//        map.display();
-//
-////        map.remove(point_1);
-////        map.displayData();
-////        map.display();
-//
-//        BoundingRectangle box = BoundingRectangle.getInstance();
+        // Map2D map = Map2D.getInstance();
+        //
+        // Place point_1 = new Place(new Point(100, 200), "Place 1", new
+        // ServiceType[]{ServiceType.CAFE});
+        // Place point_2 = new Place(new Point(150, 250), "Place 2", new
+        // ServiceType[]{ServiceType.HOSPITAL});
+        // map.insert(point_1);
+        // map.insert(point_2);
+        // map.insert(new Place(new Point(300, 400), "Place 3", new
+        // ServiceType[]{ServiceType.RESTAURANT}));
+        // map.insert(new Place(new Point(500, 600), "Place 4", new
+        // ServiceType[]{ServiceType.HOTEL}));
+        // map.insert(new Place(new Point(700, 800), "Place 5", new
+        // ServiceType[]{ServiceType.SCHOOL}));
+        //
+        // System.out.println("Map Places:");
+        // map.displayData();
+        // map.display();
+        //
+        //// map.remove(point_1);
+        //// map.displayData();
+        //// map.display();
+        //
+        // BoundingRectangle box = BoundingRectangle.getInstance();
         // Box setup
 
-            // map
-//        box.clear();
-//        System.out.println("Place: " + map.searchPlace(box, point_2));
-//        map.search(box, point_2);
-//        box.showPlaces();
+        // map
+        // box.clear();
+        // System.out.println("Place: " + map.searchPlace(box, point_2));
+        // map.search(box, point_2);
+        // box.showPlaces();
 
-            // location
-//
-//        Place placeCenter = new Place(); // add attribute
-//        placeCenter.setLocation(new Point(1000, 1000));
-//        box.setDistanceType(BoundingRectangle.DistanceType.WALKING); // 100 000
-//        box.adjust(placeCenter, -1); // distance = -1 to use distanceType
-//        System.out.println(box);
-//        // search by Name
-//        Place partialPlace = new Place();
-//        partialPlace.setName("Place 1");
-//        System.out.println(placeCenter.distance(point_1));
-//        map.search(box, null);
-//        System.out.println(box + "contains: " + box.getBoundary().contains(point_1.getLocation()));
-//        box.showPlaces();
+        // location
+        //
+        // Place placeCenter = new Place(); // add attribute
+        // placeCenter.setLocation(new Point(1000, 1000));
+        // box.setDistanceType(BoundingRectangle.DistanceType.WALKING); // 100 000
+        // box.adjust(placeCenter, -1); // distance = -1 to use distanceType
+        // System.out.println(box);
+        // // search by Name
+        // Place partialPlace = new Place();
+        // partialPlace.setName("Place 1");
+        // System.out.println(placeCenter.distance(point_1));
+        // map.search(box, null);
+        // System.out.println(box + "contains: " +
+        // box.getBoundary().contains(point_1.getLocation()));
+        // box.showPlaces();
 
-//        map.searchPlace(box, place);
+        // map.searchPlace(box, place);
 
         mainMenu();
     }

@@ -17,6 +17,25 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * This class represents the menu for the Map Services application.
+ * It provides options for inserting, removing, editing, and displaying places
+ * on the map.
+ * The menu is displayed in the console and user input is used to perform the
+ * desired actions.
+ * The menu also allows loading places from a file and displaying the tree map.
+ * 
+ * The class uses the Map2D and BoundingRectangle classes to store and
+ * manipulate places and their locations.
+ * It also uses the Place and ServiceType classes to represent individual places
+ * and their services.
+ * 
+ * The menu is implemented using a switch statement and various helper methods.
+ * Each menu option is associated with a specific action, such as inserting a
+ * place or removing a place.
+ * The menu also provides a return to main menu option to navigate back to the
+ * main menu after completing an action.
+ */
 public class Menu {
 
     private final Scanner scanner;
