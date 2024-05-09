@@ -1,16 +1,16 @@
-### Map2D Application README
+# README Map2D Application by GROUP21 
 
-#### Overview
+## Overview
 The Map2D application is a Java-based system designed to manage geographical places on a 2D map. It allows users to add, remove, edit, and display places, as well as perform detailed searches based on various attributes such as location, services provided, and name. The system utilizes a quad-tree data structure for efficient spatial indexing and querying.
 
-#### Features
+## Features
 - **Manage Places**: Insert, remove, and edit places with attributes like name, location, and services.
 - **Display Options**: Visualize places and their information on the map.
 - **Search Functionality**: Perform advanced searches within a defined bounding box or across the entire map, with options to sort by distance or name.
 - **Interactive Menu**: Navigate through the application using a user-friendly console-based menu system.
 - **File Loading**: Populate the map with places from a predefined file, facilitating easy data management.
 
-#### Installation
+## Installation
 1. **Prerequisites**:
     - Java JDK 11 or later must be installed on your machine.
     - Ensure Java is properly set in your system's PATH.
@@ -32,7 +32,7 @@ The Map2D application is a Java-based system designed to manage geographical pla
    java main.Application
    ```
 
-#### Usage
+## Usage
 Upon running the application, you will be greeted with the main menu which offers the following options:
 
 1. **Insert a Place**: Add a new place by specifying its name, location, and the services it offers.
@@ -46,24 +46,25 @@ Upon running the application, you will be greeted with the main menu which offer
 
 Follow the on-screen prompts to navigate through the various functionalities.
 
-#### Code Structure
+## Code Structure
 The application is divided into several packages:
 - **main.model**: Contains the core data structures and logic for place management and quad-tree operations.
 - **main.view**: Houses the user interface components, specifically the menu system for interacting with the application.
 - **main.dataStructure**: Includes custom implementations of data structures used throughout the application.
+- **main.util**: Contains utility classes and functions used throughout the application.
 
-#### Contributing
+## Contributing
 Contributions are welcome. Please fork the repository, make your changes, and submit a pull request.
 
-#### License
+## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
-#### Authors
+## Authors
 - GROUP 15
-    - Nguyen Chi Nghia
-    - Duong Viet Hoang
-    - Nguyen Huy Anh
-    - Vu Tien Quang
+    - Nguyen Chi Nghia - Contributing score: 5
+    - Duong Viet Hoang - Contributing score: 5
+    - Nguyen Huy Anh - Contributing score: 5
+    - Vu Tien Quang - Contributing score: 5
 
 Feel free to reach out to any of the contributors for questions or discussions regarding the project.
 
