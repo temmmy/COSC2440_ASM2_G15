@@ -24,5 +24,9 @@ public enum ServiceType {
     CINEMA,
     GYM,
     STORE,
-    LIBRARY
+    LIBRARY,
+    FUEL_STATION,
+    PLACE_OF_WORSHIP,
+    PHARMACY
+    
 }
