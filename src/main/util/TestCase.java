@@ -1,4 +1,4 @@
-package main;
+package main.util;
 
 import main.dataStructure.Point;
 import main.model.BoundingRectangle;
