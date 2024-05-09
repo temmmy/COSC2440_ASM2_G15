@@ -103,13 +103,15 @@ public class Menu {
                     String[] servicesStr = parts[1].split("\\|");
                     ServiceType[] services = new ServiceType[servicesStr.length];
                     for (int i = 0; i < servicesStr.length; i++) {
-                        services[i] = ServiceType.valueOf(servicesStr[i]);
+                        servicesStr[i] = servicesStr[i].replace(" ", "_");
+                        services[i] = ServiceType.valueOf(servicesStr[i].trim());
                     }
                     int x = Integer.parseInt(parts[2]);
                     int y = Integer.parseInt(parts[3]);
                     Place place = new Place(new Point(x, y), name, services);
                     if (map.insert(place)) {
                         System.out.println("Inserted " + place);
+                        System.out.println(map.size());
                     } else {
                         System.out.println("Error inserting " + place);
                     }
@@ -384,6 +386,7 @@ public class Menu {
 
     private Place getPlace() {
         Place placeToCompare = createPartialPlace();
+        box.clear();
         ArrayList<Place> results = map.search(box, placeToCompare);
         if (results.isEmpty()) {
             return null;
