@@ -57,6 +57,7 @@ public class LoadPlaces {
                     String[] servicesStr = parts[1].split("\\|");
                     ServiceType[] services = new ServiceType[servicesStr.length];
                     for (int i = 0; i < servicesStr.length; i++) {
+                        servicesStr[i] = servicesStr[i].replace(" ", "_");
                         services[i] = ServiceType.valueOf(servicesStr[i].trim());
                     }
                     int x = Integer.parseInt(parts[2].trim());
