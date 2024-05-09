@@ -1,4 +1,4 @@
-# README Map2D Application by GROUP21 
+# Map2D Application by GROUP21 
 
 ## Overview
 The Map2D application is a Java-based system designed to manage geographical places on a 2D map. It allows users to add, remove, edit, and display places, as well as perform detailed searches based on various attributes such as location, services provided, and name. The system utilizes a quad-tree data structure for efficient spatial indexing and querying.
