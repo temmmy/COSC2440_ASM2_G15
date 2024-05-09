@@ -28,5 +28,5 @@ public enum ServiceType {
     FUEL_STATION,
     PLACE_OF_WORSHIP,
     PHARMACY
-    
+
 }
