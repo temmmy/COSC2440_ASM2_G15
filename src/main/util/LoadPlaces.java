@@ -72,7 +72,7 @@ public class LoadPlaces {
 
     public static void main(String[] args) {
         Map2D map = Map2D.getInstance();
-        loadPlacesFromFile("resources\\places.txt", map);
+        loadPlacesFromFile("src/resources/places.txt", map);
         // Display loaded data to verify
         map.displayData();
     }
